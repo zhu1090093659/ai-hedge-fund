@@ -6,10 +6,6 @@ const Backtest = {
     activeTaskId: null,
     // Store active backtest result
     activeBacktest: null,
-    // Task polling interval (milliseconds)
-    pollInterval: 2000,
-    // Task polling timer
-    pollTimer: null,
     
     /**
      * Initialize backtest components
@@ -84,6 +80,13 @@ const Backtest = {
             return;
         }
         
+        // Validate ticker formats
+        const invalidTickers = tickers.filter(ticker => !API.validateTickerFormat(ticker));
+        if (invalidTickers.length > 0) {
+            Utils.showToast(`Invalid ticker format: ${invalidTickers.join(', ')}`, 'error');
+            return;
+        }
+        
         // Get selected analysts
         const selectedAnalysts = Array.from(analystCheckboxes).map(checkbox => checkbox.dataset.analystId);
         if (selectedAnalysts.length === 0) {
@@ -119,87 +122,54 @@ const Backtest = {
             return;
         }
         
-        // Prepare request data
-        const requestData = {
-            tickers: tickers,
-            start_date: startDate,
-            end_date: endDate,
-            initial_capital: initialCapital,
-            margin_requirement: marginRequirement,
-            selected_analysts: selectedAnalysts,
-            model_name: modelName,
-            model_provider: modelProvider
-        };
-        
         // Show loading state
         this.showBacktestLoading();
         
         // Send backtest request
-        API.post(CONFIG.API.ENDPOINTS.BACKTEST, requestData)
+        API.runBacktest(
+            tickers, 
+            startDate, 
+            endDate, 
+            initialCapital, 
+            marginRequirement, 
+            selectedAnalysts, 
+            modelName, 
+            modelProvider
+        )
             .then(response => {
                 if (response && response.task_id) {
                     this.activeTaskId = response.task_id;
-                    this.pollBacktestTask();
                     Utils.showToast('Backtest started', 'info');
+                    
+                    // Poll for task updates
+                    API.pollTask(
+                        response.task_id,
+                        // Progress callback
+                        (progress) => {
+                            this.updateBacktestProgress(progress);
+                        },
+                        // Complete callback
+                        (result) => {
+                            this.showBacktestResults(result);
+                            this.activeBacktest = {
+                                id: `backtest_${Date.now()}`,
+                                date: new Date().toISOString(),
+                                ...result
+                            };
+                        },
+                        // Error callback
+                        (error) => {
+                            this.showBacktestError(error || 'Backtest failed');
+                            this.activeTaskId = null;
+                        }
+                    );
                 } else {
                     this.showBacktestError('Invalid response from server');
                 }
             })
             .catch(error => {
                 console.error('Error starting backtest:', error);
-                this.showBacktestError('Failed to start backtest');
-            });
-    },
-    
-    /**
-     * Poll backtest task status
-     */
-    pollBacktestTask: function() {
-        if (!this.activeTaskId) return;
-        
-        // Clear existing timer
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
-            this.pollTimer = null;
-        }
-        
-        // Poll task status
-        API.get(`${CONFIG.API.ENDPOINTS.TASK}/${this.activeTaskId}`)
-            .then(response => {
-                if (!response) {
-                    this.showBacktestError('Invalid response from server');
-                    return;
-                }
-                
-                const { status, progress, result, error } = response;
-                
-                // Update progress
-                this.updateBacktestProgress(progress);
-                
-                if (status === 'completed') {
-                    // Backtest completed successfully
-                    this.showBacktestResults(result);
-                    this.activeTaskId = null;
-                    this.activeBacktest = {
-                        id: `backtest_${Date.now()}`,
-                        date: new Date().toISOString(),
-                        ...result
-                    };
-                } else if (status === 'error') {
-                    // Backtest failed
-                    this.showBacktestError(error || 'Backtest failed');
-                    this.activeTaskId = null;
-                } else {
-                    // Backtest still running, poll again
-                    this.pollTimer = setTimeout(() => {
-                        this.pollBacktestTask();
-                    }, this.pollInterval);
-                }
-            })
-            .catch(error => {
-                console.error('Error polling backtest task:', error);
-                this.showBacktestError('Failed to check backtest status');
-                this.activeTaskId = null;
+                this.showBacktestError('Failed to start backtest. Please check your connection.');
             });
     },
     
@@ -214,11 +184,11 @@ const Backtest = {
         
         if (statusElement) {
             statusElement.innerHTML = `
-                <div class="loading-state">
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: 0%"></div>
+                <div class="loading-state text-center">
+                    <div class="progress-container mb-4 bg-gray-200 dark:bg-secondary-700 rounded-full h-2.5 w-full max-w-md mx-auto">
+                        <div class="progress-bar bg-primary-600 h-2.5 rounded-full" style="width: 0%"></div>
                     </div>
-                    <p>Backtesting in progress. This may take a few minutes...</p>
+                    <p class="text-gray-500 dark:text-secondary-400">Backtesting in progress. This may take a few minutes...</p>
                 </div>
             `;
             statusElement.style.display = 'block';
@@ -258,11 +228,11 @@ const Backtest = {
         
         if (statusElement) {
             statusElement.innerHTML = `
-                <div class="error-state">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>${error}</p>
-                    <button id="retryBacktestBtn" class="btn-secondary">
-                        <i class="fas fa-redo"></i> Retry
+                <div class="error-state text-center">
+                    <i class="ti ti-alert-triangle text-3xl text-red-500 mb-2"></i>
+                    <p class="text-red-500 mb-4">${error}</p>
+                    <button id="retryBacktestBtn" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                        <i class="ti ti-refresh"></i> Retry
                     </button>
                 </div>
             `;
@@ -337,16 +307,20 @@ const Backtest = {
         }
         
         // Update metrics display
-        document.getElementById('totalReturn').textContent = Utils.formatPercentage(totalReturn, 2, true);
-        document.getElementById('totalReturn').classList.add(totalReturn >= 0 ? 'positive' : 'negative');
+        const totalReturnElement = document.getElementById('totalReturn');
+        totalReturnElement.textContent = Utils.formatPercentage(totalReturn, 2, true);
+        totalReturnElement.className = totalReturn >= 0 ? 'text-lg font-semibold text-green-500' : 'text-lg font-semibold text-red-500';
         
-        document.getElementById('sharpeRatio').textContent = (metrics.sharpe_ratio || 0).toFixed(2);
+        const sharpeRatio = document.getElementById('sharpeRatio');
+        sharpeRatio.textContent = (metrics.sharpe_ratio || 0).toFixed(2);
         
+        const maxDrawdownElement = document.getElementById('maxDrawdown');
         const maxDrawdown = metrics.max_drawdown || 0;
-        document.getElementById('maxDrawdown').textContent = Utils.formatPercentage(maxDrawdown / 100, 2, true);
-        document.getElementById('maxDrawdown').classList.add('negative');
+        maxDrawdownElement.textContent = Utils.formatPercentage(maxDrawdown / 100, 2, true);
+        maxDrawdownElement.className = 'text-lg font-semibold text-red-500';
         
-        document.getElementById('winRate').textContent = Utils.formatPercentage((metrics.win_rate || 0) / 100, 1, false);
+        const winRateElement = document.getElementById('winRate');
+        winRateElement.textContent = Utils.formatPercentage((metrics.win_rate || 0) / 100, 1, false);
     },
     
     /**
@@ -359,24 +333,24 @@ const Backtest = {
         const positions = finalPortfolio.positions || {};
         
         if (Object.keys(positions).length === 0) {
-            return '<p class="no-trades">No trades executed during backtest</p>';
+            return '<p class="text-center text-gray-500 dark:text-secondary-400 py-6">No trades executed during backtest</p>';
         }
         
         let html = `
-            <h4>Final Portfolio Positions</h4>
-            <div class="trades-table-container">
-                <table class="trades-table">
+            <h4 class="text-lg font-semibold mb-4 mt-6">Final Portfolio Positions</h4>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
                     <thead>
                         <tr>
-                            <th>Ticker</th>
-                            <th>Type</th>
-                            <th>Quantity</th>
-                            <th>Avg. Price</th>
-                            <th>Value</th>
-                            <th>Realized P/L</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Type</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Quantity</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Avg. Price</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Value</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Realized P/L</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-gray-200 dark:divide-secondary-700">
         `;
         
         // Calculate total P/L
@@ -390,15 +364,16 @@ const Backtest = {
             // Add long position if exists
             if (position.long > 0) {
                 const value = position.long * position.long_cost_basis;
+                const plClass = realizedGains.long >= 0 ? 'text-green-500' : 'text-red-500';
                 
                 html += `
                     <tr>
-                        <td>${ticker}</td>
-                        <td>Long</td>
-                        <td>${position.long}</td>
-                        <td>${Utils.formatCurrency(position.long_cost_basis)}</td>
-                        <td>${Utils.formatCurrency(value)}</td>
-                        <td class="${realizedGains.long >= 0 ? 'positive' : 'negative'}">${Utils.formatCurrency(realizedGains.long)}</td>
+                        <td class="px-4 py-3">${ticker}</td>
+                        <td class="px-4 py-3 text-green-500 font-medium">Long</td>
+                        <td class="px-4 py-3">${position.long}</td>
+                        <td class="px-4 py-3">${Utils.formatCurrency(position.long_cost_basis)}</td>
+                        <td class="px-4 py-3">${Utils.formatCurrency(value)}</td>
+                        <td class="px-4 py-3 ${plClass} font-medium">${Utils.formatCurrency(realizedGains.long)}</td>
                     </tr>
                 `;
             }
@@ -406,15 +381,16 @@ const Backtest = {
             // Add short position if exists
             if (position.short > 0) {
                 const value = position.short * position.short_cost_basis;
+                const plClass = realizedGains.short >= 0 ? 'text-green-500' : 'text-red-500';
                 
                 html += `
                     <tr>
-                        <td>${ticker}</td>
-                        <td>Short</td>
-                        <td>${position.short}</td>
-                        <td>${Utils.formatCurrency(position.short_cost_basis)}</td>
-                        <td>${Utils.formatCurrency(value)}</td>
-                        <td class="${realizedGains.short >= 0 ? 'positive' : 'negative'}">${Utils.formatCurrency(realizedGains.short)}</td>
+                        <td class="px-4 py-3">${ticker}</td>
+                        <td class="px-4 py-3 text-red-500 font-medium">Short</td>
+                        <td class="px-4 py-3">${position.short}</td>
+                        <td class="px-4 py-3">${Utils.formatCurrency(position.short_cost_basis)}</td>
+                        <td class="px-4 py-3">${Utils.formatCurrency(value)}</td>
+                        <td class="px-4 py-3 ${plClass} font-medium">${Utils.formatCurrency(realizedGains.short)}</td>
                     </tr>
                 `;
             }
@@ -423,20 +399,24 @@ const Backtest = {
         // Add cash position
         html += `
             <tr>
-                <td colspan="4" class="text-right"><strong>Cash</strong></td>
-                <td>${Utils.formatCurrency(finalPortfolio.cash || 0)}</td>
+                <td colspan="4" class="px-4 py-3 text-right font-semibold">Cash</td>
+                <td class="px-4 py-3 font-semibold">${Utils.formatCurrency(finalPortfolio.cash || 0)}</td>
                 <td></td>
             </tr>
         `;
         
         // Add total row
+        const totalPortfolioValue = (finalPortfolio.cash || 0) + Object.values(positions).reduce((sum, pos) => {
+            return sum + (pos.long * pos.long_cost_basis) + (pos.short * pos.short_cost_basis);
+        }, 0);
+        
+        const totalPlClass = totalRealizedPL >= 0 ? 'text-green-500' : 'text-red-500';
+        
         html += `
-            <tr class="total-row">
-                <td colspan="4" class="text-right"><strong>Total</strong></td>
-                <td><strong>${Utils.formatCurrency((finalPortfolio.cash || 0) + Object.values(positions).reduce((sum, pos) => {
-                    return sum + (pos.long * pos.long_cost_basis) + (pos.short * pos.short_cost_basis);
-                }, 0))}</strong></td>
-                <td class="${totalRealizedPL >= 0 ? 'positive' : 'negative'}"><strong>${Utils.formatCurrency(totalRealizedPL)}</strong></td>
+            <tr class="bg-gray-50 dark:bg-secondary-700/50">
+                <td colspan="4" class="px-4 py-3 text-right font-bold">Total</td>
+                <td class="px-4 py-3 font-bold">${Utils.formatCurrency(totalPortfolioValue)}</td>
+                <td class="px-4 py-3 ${totalPlClass} font-bold">${Utils.formatCurrency(totalRealizedPL)}</td>
             </tr>
         `;
         

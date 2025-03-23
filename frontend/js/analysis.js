@@ -19,6 +19,7 @@ const Analysis = {
         this.loadModels();
         this.initDatePickers();
         this.setupEventListeners();
+        this.loadRecentAnalyses();
     },
     
     /**
@@ -28,20 +29,23 @@ const Analysis = {
         const container = document.getElementById('analystSelector');
         if (!container) return;
         
-        // Clear existing content
-        container.innerHTML = '';
+        // Show loading state
+        container.innerHTML = '<div class="analyst-checkbox skeleton-pulse">Loading analysts...</div>';
         
         // Get user settings for default analysts
         const settings = Utils.getSettings();
         const defaultAnalysts = settings.defaultAnalysts || CONFIG.DEFAULTS.ANALYSTS;
         
         // Fetch analysts from API
-        API.get(CONFIG.API.ENDPOINTS.ANALYSTS)
+        API.getAnalysts()
             .then(analysts => {
                 if (!analysts || !analysts.length) {
                     container.innerHTML = '<p>No analysts available</p>';
                     return;
                 }
+                
+                // Clear existing content
+                container.innerHTML = '';
                 
                 // Create checkboxes for each analyst
                 analysts.forEach(analyst => {
@@ -65,7 +69,10 @@ const Analysis = {
             })
             .catch(error => {
                 console.error('Error loading analysts:', error);
-                container.innerHTML = '<p>Error loading analysts</p>';
+                container.innerHTML = '<p>Error loading analysts. Please check your connection.</p>';
+                
+                // Show toast notification
+                Utils.showToast('Failed to load analysts. Please check your connection.', 'error');
             });
     },
     
@@ -107,12 +114,16 @@ const Analysis = {
         const backtestModelSelect = document.getElementById('backtestModelSelect');
         if (!modelSelect && !backtestModelSelect) return;
         
+        // Show loading state
+        if (modelSelect) modelSelect.innerHTML = '<option value="">Loading models...</option>';
+        if (backtestModelSelect) backtestModelSelect.innerHTML = '<option value="">Loading models...</option>';
+        
         // Get user settings for default model
         const settings = Utils.getSettings();
         const defaultModel = settings.defaultModel || CONFIG.DEFAULTS.MODEL_NAME;
         
         // Fetch models from API
-        API.get(CONFIG.API.ENDPOINTS.MODELS)
+        API.getModels()
             .then(models => {
                 if (!models || !models.length) {
                     if (modelSelect) modelSelect.innerHTML = '<option value="">No models available</option>';
@@ -134,6 +145,9 @@ const Analysis = {
                 console.error('Error loading models:', error);
                 if (modelSelect) modelSelect.innerHTML = '<option value="">Error loading models</option>';
                 if (backtestModelSelect) backtestModelSelect.innerHTML = '<option value="">Error loading models</option>';
+                
+                // Show toast notification
+                Utils.showToast('Failed to load AI models. Please check your connection.', 'error');
             });
     },
     
@@ -234,6 +248,13 @@ const Analysis = {
             return;
         }
         
+        // Validate ticker formats
+        const invalidTickers = tickers.filter(ticker => !API.validateTickerFormat(ticker));
+        if (invalidTickers.length > 0) {
+            Utils.showToast(`Invalid ticker format: ${invalidTickers.join(', ')}`, 'error');
+            return;
+        }
+        
         // Get selected analysts
         const selectedAnalysts = Array.from(analystCheckboxes).map(checkbox => checkbox.dataset.analystId);
         if (selectedAnalysts.length === 0) {
@@ -255,85 +276,45 @@ const Analysis = {
             return;
         }
         
-        // Prepare request data
-        const requestData = {
-            tickers: tickers,
-            start_date: startDate,
-            end_date: endDate,
-            selected_analysts: selectedAnalysts,
-            model_name: modelName,
-            model_provider: modelProvider
-        };
-        
         // Show loading state
         this.showAnalysisLoading();
         
         // Send analysis request
-        API.post(CONFIG.API.ENDPOINTS.ANALYZE, requestData)
+        API.runAnalysis(tickers, startDate, endDate, selectedAnalysts, modelName, modelProvider)
             .then(response => {
                 if (response && response.task_id) {
                     this.activeTaskId = response.task_id;
-                    this.pollAnalysisTask();
                     Utils.showToast('Analysis started', 'info');
+                    
+                    // Poll for task updates
+                    API.pollTask(
+                        response.task_id,
+                        // Progress callback
+                        (progress) => {
+                            this.updateAnalysisProgress(progress);
+                        },
+                        // Complete callback
+                        (result) => {
+                            this.showAnalysisResults(result);
+                            this.activeAnalysis = {
+                                tickers: result ? Object.keys(result.decisions || {}) : [],
+                                result: result
+                            };
+                            Utils.saveRecentAnalysis(this.activeAnalysis);
+                        },
+                        // Error callback
+                        (error) => {
+                            this.showAnalysisError(error || 'Analysis failed');
+                            this.activeTaskId = null;
+                        }
+                    );
                 } else {
                     this.showAnalysisError('Invalid response from server');
                 }
             })
             .catch(error => {
                 console.error('Error starting analysis:', error);
-                this.showAnalysisError('Failed to start analysis');
-            });
-    },
-    
-    /**
-     * Poll analysis task status
-     */
-    pollAnalysisTask: function() {
-        if (!this.activeTaskId) return;
-        
-        // Clear existing timer
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
-            this.pollTimer = null;
-        }
-        
-        // Poll task status
-        API.get(`${CONFIG.API.ENDPOINTS.TASK}/${this.activeTaskId}`)
-            .then(response => {
-                if (!response) {
-                    this.showAnalysisError('Invalid response from server');
-                    return;
-                }
-                
-                const { status, progress, result, error } = response;
-                
-                // Update progress
-                this.updateAnalysisProgress(progress);
-                
-                if (status === 'completed') {
-                    // Analysis completed successfully
-                    this.showAnalysisResults(result);
-                    this.activeTaskId = null;
-                    this.activeAnalysis = {
-                        tickers: result ? Object.keys(result.decisions || {}) : [],
-                        result: result
-                    };
-                    Utils.saveRecentAnalysis(this.activeAnalysis);
-                } else if (status === 'error') {
-                    // Analysis failed
-                    this.showAnalysisError(error || 'Analysis failed');
-                    this.activeTaskId = null;
-                } else {
-                    // Analysis still running, poll again
-                    this.pollTimer = setTimeout(() => {
-                        this.pollAnalysisTask();
-                    }, this.pollInterval);
-                }
-            })
-            .catch(error => {
-                console.error('Error polling analysis task:', error);
-                this.showAnalysisError('Failed to check analysis status');
-                this.activeTaskId = null;
+                this.showAnalysisError('Failed to start analysis. Please check your connection.');
             });
     },
     
@@ -384,10 +365,10 @@ const Analysis = {
         if (statusElement) {
             statusElement.innerHTML = `
                 <div class="error-state">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>${error}</p>
-                    <button id="retryAnalysisBtn" class="btn-secondary">
-                        <i class="fas fa-redo"></i> Retry
+                    <i class="ti ti-alert-triangle text-3xl text-red-500 mb-2"></i>
+                    <p class="text-red-500">${error}</p>
+                    <button id="retryAnalysisBtn" class="mt-4 py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                        <i class="ti ti-refresh"></i> Retry
                     </button>
                 </div>
             `;
@@ -430,34 +411,39 @@ const Analysis = {
             let html = '<div class="analysis-result">';
             
             // Add decisions section
-            html += '<div class="decisions-section">';
-            html += '<h4>Trading Decisions</h4>';
-            html += '<div class="decisions-table-container">';
-            html += '<table class="decisions-table">';
-            html += '<thead><tr><th>Ticker</th><th>Action</th><th>Quantity</th><th>Confidence</th></tr></thead>';
-            html += '<tbody>';
+            html += '<div class="decisions-section mb-6">';
+            html += '<h4 class="text-lg font-semibold mb-3">Trading Decisions</h4>';
+            html += '<div class="decisions-table-container overflow-x-auto">';
+            html += '<table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">';
+            html += '<thead><tr>';
+            html += '<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>';
+            html += '<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Action</th>';
+            html += '<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Quantity</th>';
+            html += '<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Confidence</th>';
+            html += '</tr></thead>';
+            html += '<tbody class="divide-y divide-gray-200 dark:divide-secondary-700">';
             
             for (const [ticker, decision] of Object.entries(result.decisions)) {
-                const actionClass = decision.action === 'buy' || decision.action === 'cover' ? 'positive' : 
-                                   (decision.action === 'sell' || decision.action === 'short' ? 'negative' : '');
+                const actionClass = decision.action === 'buy' || decision.action === 'cover' ? 'text-green-500' : 
+                                   (decision.action === 'sell' || decision.action === 'short' ? 'text-red-500' : '');
                 
                 html += `<tr>
-                    <td>${ticker}</td>
-                    <td class="${actionClass}">${decision.action.toUpperCase()}</td>
-                    <td>${decision.quantity}</td>
-                    <td>${decision.confidence.toFixed(1)}%</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${ticker}</td>
+                    <td class="px-4 py-3 whitespace-nowrap ${actionClass} font-medium">${decision.action.toUpperCase()}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${decision.quantity}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">${decision.confidence.toFixed(1)}%</td>
                 </tr>`;
             }
             
             html += '</tbody></table></div>';
             
             // Add reasoning section
-            html += '<div class="reasoning-section">';
+            html += '<div class="reasoning-section mt-6 space-y-4">';
             for (const [ticker, decision] of Object.entries(result.decisions)) {
                 if (decision.reasoning) {
-                    html += `<div class="ticker-reasoning">
-                        <h5>${ticker} Reasoning</h5>
-                        <p>${decision.reasoning}</p>
+                    html += `<div class="ticker-reasoning bg-gray-50 dark:bg-secondary-700/50 p-4 rounded-lg">
+                        <h5 class="font-medium mb-2">${ticker} Reasoning</h5>
+                        <p class="text-sm text-gray-600 dark:text-secondary-300">${decision.reasoning}</p>
                     </div>`;
                 }
             }
@@ -466,33 +452,37 @@ const Analysis = {
             // Add analyst signals section
             if (result.analyst_signals && Object.keys(result.analyst_signals).length > 0) {
                 html += '<div class="analyst-signals-section">';
-                html += '<h4>Analyst Signals</h4>';
+                html += '<h4 class="text-lg font-semibold mb-3">Analyst Signals</h4>';
                 
                 // For each ticker
                 const tickers = Object.keys(result.decisions);
                 for (const ticker of tickers) {
-                    html += `<div class="ticker-signals">
-                        <h5>${ticker} Signals</h5>
-                        <div class="signals-table-container">
-                        <table class="signals-table">
-                        <thead><tr><th>Analyst</th><th>Signal</th><th>Confidence</th></tr></thead>
-                        <tbody>`;
+                    html += `<div class="ticker-signals mb-6">
+                        <h5 class="font-medium mb-2">${ticker} Signals</h5>
+                        <div class="signals-table-container overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
+                        <thead><tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Analyst</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Signal</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Confidence</th>
+                        </tr></thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-secondary-700">`;
                     
                     // For each analyst that analyzed this ticker
                     for (const [analyst, signals] of Object.entries(result.analyst_signals)) {
                         if (!signals[ticker]) continue;
                         
                         const signal = signals[ticker];
-                        const signalClass = signal.signal === 'bullish' ? 'positive' : 
-                                          (signal.signal === 'bearish' ? 'negative' : '');
+                        const signalClass = signal.signal === 'bullish' ? 'text-green-500' : 
+                                          (signal.signal === 'bearish' ? 'text-red-500' : 'text-yellow-500');
                         
                         const analystName = analyst.replace('_agent', '').replace(/_/g, ' ');
                         const displayName = analystName.charAt(0).toUpperCase() + analystName.slice(1);
                         
                         html += `<tr>
-                            <td>${displayName}</td>
-                            <td class="${signalClass}">${signal.signal.toUpperCase()}</td>
-                            <td>${signal.confidence.toFixed(1)}%</td>
+                            <td class="px-4 py-3">${displayName}</td>
+                            <td class="px-4 py-3 ${signalClass} font-medium">${signal.signal.toUpperCase()}</td>
+                            <td class="px-4 py-3">${signal.confidence.toFixed(1)}%</td>
                         </tr>`;
                     }
                     
@@ -506,7 +496,110 @@ const Analysis = {
             
             outputElement.innerHTML = html;
             outputElement.style.display = 'block';
+            
+            // Update recent analyses
+            this.loadRecentAnalyses();
         }
+    },
+    
+    /**
+     * Load recent analyses for the dashboard
+     */
+    loadRecentAnalyses: function() {
+        const analysesContainer = document.getElementById('recentAnalysesList');
+        if (!analysesContainer) return;
+        
+        const recentAnalyses = Utils.getRecentAnalyses();
+        
+        // Clear existing content
+        analysesContainer.innerHTML = '';
+        
+        if (recentAnalyses.length === 0) {
+            analysesContainer.innerHTML = `
+                <div class="empty-state flex flex-col items-center justify-center py-8">
+                    <i class="ti ti-robot text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                    <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">No recent analyses</p>
+                    <button id="emptyAnalysisGo" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                        <i class="ti ti-robot"></i> Run Analysis
+                    </button>
+                </div>
+            `;
+            
+            // Add event listener
+            analysesContainer.querySelector('#emptyAnalysisGo').addEventListener('click', () => {
+                document.querySelector('[data-section="analysis"]').click();
+            });
+            return;
+        }
+        
+        // Display recent analyses
+        for (const analysis of recentAnalyses.slice(0, 5)) {
+            const analysisItem = document.createElement('div');
+            analysisItem.className = 'bg-white dark:bg-secondary-800 border border-gray-200 dark:border-secondary-700 rounded-lg p-4 mb-4';
+            
+            // Format tickers string
+            let tickersStr = '';
+            if (analysis.tickers && analysis.tickers.length > 0) {
+                tickersStr = analysis.tickers.join(', ');
+                if (tickersStr.length > 25) {
+                    tickersStr = tickersStr.substring(0, 22) + '...';
+                }
+            }
+            
+            // Format date
+            const date = new Date(analysis.date);
+            const formattedDate = date.toLocaleDateString();
+            
+            analysisItem.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-500 dark:text-secondary-400">${formattedDate}</span>
+                    <span class="text-xs font-medium text-primary-600 dark:text-primary-400">${tickersStr}</span>
+                </div>
+                <div class="space-y-2 mb-3">
+                    ${this.formatAnalysisSignals(analysis)}
+                </div>
+                <div class="flex justify-end">
+                    <button class="view-analysis py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-md border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 dark:bg-primary-800/30 dark:text-primary-500 dark:hover:bg-primary-800/40" data-id="${analysis.id}">
+                        <i class="ti ti-eye"></i> View
+                    </button>
+                </div>
+            `;
+            
+            analysesContainer.appendChild(analysisItem);
+            
+            // Add event listener
+            analysisItem.querySelector('.view-analysis').addEventListener('click', () => {
+                // Navigate to analysis tab and load analysis details
+                document.querySelector('[data-section="analysis"]').click();
+                this.loadSavedAnalysis(analysis.id);
+            });
+        }
+    },
+    
+    /**
+     * Format analysis signals for display
+     * @param {Object} analysis - Analysis data
+     * @returns {string} HTML for signals
+     */
+    formatAnalysisSignals: function(analysis) {
+        if (!analysis.result || !analysis.result.decisions) {
+            return '<span class="text-sm text-gray-500 dark:text-secondary-400">No signals available</span>';
+        }
+        
+        let html = '';
+        for (const [ticker, decision] of Object.entries(analysis.result.decisions)) {
+            const actionClass = decision.action === 'buy' || decision.action === 'cover' ? 'text-green-500' : 
+                               (decision.action === 'sell' || decision.action === 'short' ? 'text-red-500' : 'text-yellow-500');
+            
+            html += `
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium">${ticker}</span>
+                    <span class="text-xs ${actionClass} font-medium">${decision.action.toUpperCase()} (${decision.confidence.toFixed(1)}%)</span>
+                </div>
+            `;
+        }
+        
+        return html;
     },
     
     /**
@@ -527,9 +620,6 @@ const Analysis = {
         
         // Show results
         this.showAnalysisResults(analysis.result);
-        
-        // Scroll to results
-        document.getElementById('analysisResults').scrollIntoView({ behavior: 'smooth' });
     },
     
     /**

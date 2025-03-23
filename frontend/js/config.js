@@ -2,9 +2,12 @@
  * AI Hedge Fund Dashboard Configuration
  */
 const CONFIG = {
+    // Environment configuration (production or development)
+    ENV: 'production',  // Set to 'development' to enable mock data
+    
     // API configuration
     API: {
-        BASE_URL: 'http://127.0.0.1:8091',  // Change this to your API endpoint
+        BASE_URL: 'http://127.0.0.1:8091',  // Default API endpoint (can be overridden in settings)
         ENDPOINTS: {
             TICKER_INFO: '/api/ticker-info',
             VALIDATE_TICKERS: '/api/validate-tickers',
@@ -22,8 +25,8 @@ const CONFIG = {
         },
         // Default request timeout in milliseconds
         TIMEOUT: 30000,
-        // Whether to show simulation data when API is not available
-        SIMULATION: true
+        // Whether to use simulation data as fallback when API is not available
+        SIMULATION: false
     },
 
     // Default markets

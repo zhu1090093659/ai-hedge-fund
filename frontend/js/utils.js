@@ -29,7 +29,7 @@ const Utils = {
      * @param {boolean} includeSign - Whether to include + sign for positive values
      * @returns {string} Formatted percentage string
      */
-    formatPercentage: function(value, decimals = 2, includeSign = true) {
+    formatPercentage: function(value, decimals = 2, includeSign = false) {
         if (value === undefined || value === null) return '--';
         
         const sign = includeSign && value > 0 ? '+' : '';
@@ -71,9 +71,9 @@ const Utils = {
         
         switch (settings.dateFormat) {
             case 'MM/DD/YYYY':
-                return `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
+                return `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
             case 'DD/MM/YYYY':
-                return `${dateObj.getDate()}/${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`;
+                return `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
             case 'YYYY-MM-DD':
             default:
                 return dateObj.toISOString().split('T')[0];
@@ -127,6 +127,7 @@ const Utils = {
             const parsedSettings = JSON.parse(storedSettings);
             return { ...defaultSettings, ...parsedSettings };
         } catch (error) {
+            console.error('Error parsing settings:', error);
             return defaultSettings;
         }
     },
@@ -155,8 +156,10 @@ const Utils = {
         if (theme === 'system') {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            document.body.classList.toggle('dark-mode', prefersDark);
         } else {
             document.documentElement.setAttribute('data-theme', theme);
+            document.body.classList.toggle('dark-mode', theme === 'dark');
         }
         
         // Store the theme preference
@@ -165,11 +168,15 @@ const Utils = {
         // Update theme toggle button
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
-            const icon = themeToggle.querySelector('i');
+            const moonIcon = themeToggle.querySelector('.ti-moon');
+            const sunIcon = themeToggle.querySelector('.ti-sun');
+            
             if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                icon.className = 'fas fa-sun';
+                if (moonIcon) moonIcon.classList.add('hidden');
+                if (sunIcon) sunIcon.classList.remove('hidden');
             } else {
-                icon.className = 'fas fa-moon';
+                if (moonIcon) moonIcon.classList.remove('hidden');
+                if (sunIcon) sunIcon.classList.add('hidden');
             }
         }
     },
@@ -192,6 +199,7 @@ const Utils = {
         try {
             return JSON.parse(storedPortfolio);
         } catch (error) {
+            console.error('Error parsing portfolio:', error);
             return defaultPortfolio;
         }
     },
@@ -215,6 +223,7 @@ const Utils = {
         try {
             return JSON.parse(storedWatchlist);
         } catch (error) {
+            console.error('Error parsing watchlist:', error);
             return [];
         }
     },
@@ -233,14 +242,24 @@ const Utils = {
      */
     addToWatchlist: function(ticker) {
         const watchlist = this.getWatchlist();
-        if (watchlist.includes(ticker)) {
-            this.showToast(`${ticker} is already in your watchlist`, 'info');
+        
+        // Normalize ticker format
+        const normalizedTicker = ticker.trim().toUpperCase();
+        
+        if (watchlist.includes(normalizedTicker)) {
+            this.showToast(`${normalizedTicker} is already in your watchlist`, 'info');
             return;
         }
         
-        watchlist.push(ticker);
+        // Validate ticker format
+        if (!this.isValidTicker(normalizedTicker)) {
+            this.showToast(`Invalid ticker format: ${normalizedTicker}`, 'error');
+            return;
+        }
+        
+        watchlist.push(normalizedTicker);
         this.saveWatchlist(watchlist);
-        this.showToast(`${ticker} added to watchlist`, 'success');
+        this.showToast(`${normalizedTicker} added to watchlist`, 'success');
         
         // Refresh watchlist if on dashboard
         if (document.getElementById('dashboard').classList.contains('active')) {
@@ -256,7 +275,10 @@ const Utils = {
         const watchlist = this.getWatchlist();
         const index = watchlist.indexOf(ticker);
         
-        if (index === -1) return;
+        if (index === -1) {
+            this.showToast(`${ticker} is not in your watchlist`, 'error');
+            return;
+        }
         
         watchlist.splice(index, 1);
         this.saveWatchlist(watchlist);
@@ -279,6 +301,7 @@ const Utils = {
         try {
             return JSON.parse(storedAnalyses);
         } catch (error) {
+            console.error('Error parsing recent analyses:', error);
             return [];
         }
     },
@@ -288,14 +311,22 @@ const Utils = {
      * @param {Object} analysis - Analysis data
      */
     saveRecentAnalysis: function(analysis) {
+        if (!analysis) return;
+        
         const recentAnalyses = this.getRecentAnalyses();
         
+        // Create a unique ID if not provided
+        if (!analysis.id) {
+            analysis.id = `analysis_${Date.now()}`;
+        }
+        
+        // Add timestamp if not provided
+        if (!analysis.date) {
+            analysis.date = new Date().toISOString();
+        }
+        
         // Add to beginning of array
-        recentAnalyses.unshift({
-            id: `analysis_${Date.now()}`,
-            date: new Date().toISOString(),
-            ...analysis
-        });
+        recentAnalyses.unshift(analysis);
         
         // Limit to 10 recent analyses
         if (recentAnalyses.length > 10) {
@@ -305,7 +336,7 @@ const Utils = {
         localStorage.setItem(CONFIG.STORAGE.RECENT_ANALYSES, JSON.stringify(recentAnalyses));
         
         // Refresh recent analyses if on dashboard
-        if (document.getElementById('dashboard').classList.contains('active')) {
+        if (document.getElementById('dashboard') && document.getElementById('dashboard').classList.contains('active')) {
             Dashboard.loadRecentAnalyses();
         }
     },
@@ -385,8 +416,25 @@ const Utils = {
             info: '#3b82f6'
         };
         
+        let iconClass = '';
+        switch (type) {
+            case 'success':
+                iconClass = 'ti-check';
+                break;
+            case 'error':
+                iconClass = 'ti-x';
+                break;
+            case 'warning':
+                iconClass = 'ti-alert-triangle';
+                break;
+            case 'info':
+            default:
+                iconClass = 'ti-info-circle';
+        }
+        
         Toastify({
-            text: message,
+            text: `<i class="${iconClass} mr-2"></i> ${message}`,
+            escapeMarkup: false,
             duration: 3000,
             gravity: 'top',
             position: 'right',
@@ -406,7 +454,7 @@ const Utils = {
     },
     
     /**
-     * Validate a ticker format
+     * Validate ticker format (US or A-share)
      * @param {string} ticker - Ticker to validate
      * @returns {boolean} Is ticker valid
      */
@@ -434,11 +482,9 @@ const Utils = {
     parseTickers: function(tickerString) {
         if (!tickerString) return [];
         
-        const tickers = tickerString.split(',')
+        return tickerString.split(',')
             .map(ticker => ticker.trim().toUpperCase())
-            .filter(ticker => this.isValidTicker(ticker));
-            
-        return [...new Set(tickers)]; // Remove duplicates
+            .filter(ticker => ticker.length > 0);
     },
     
     /**
@@ -463,15 +509,6 @@ const Utils = {
      */
     isAShare: function(ticker) {
         return /^\d{6}\.(SH|SZ)$/.test(ticker);
-    },
-    
-    /**
-     * Get market designation for a ticker
-     * @param {string} ticker - Ticker symbol
-     * @returns {string} Market designation
-     */
-    getTickerMarket: function(ticker) {
-        return this.isAShare(ticker) ? 'ASHARE' : 'US';
     },
     
     /**
