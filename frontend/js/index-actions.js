@@ -71,32 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 辅助函数
     
     /**
-     * 添加股票到自选列表
-     */
-    function addStockToWatchlist() {
-        const ticker = prompt('请输入股票代码 (例如: AAPL, 600519.SH):');
-        if (!ticker) return;
-        
-        // 使用我们刚添加的isValidTicker函数验证股票代码
-        if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-            console.log('添加有效股票:', ticker.trim().toUpperCase());
-            Utils.addToWatchlist(ticker.trim().toUpperCase());
-            
-            // 如果Dashboard对象存在，使用它的loadWatchlist方法
-            if (typeof Dashboard !== 'undefined' && typeof Dashboard.loadWatchlist === 'function') {
-                Dashboard.loadWatchlist();
-            } else {
-                // 否则刷新页面以显示更新的自选列表
-                window.location.reload();
-            }
-            
-            Utils.showToast(`已添加 ${ticker.trim().toUpperCase()} 到自选列表`, 'success');
-        } else {
-            Utils.showToast('无效的股票代码格式', 'error');
-        }
-    }
-    
-    /**
      * 切换市场指数显示
      * @param {string} market - 要显示的市场 (us, china)
      */
