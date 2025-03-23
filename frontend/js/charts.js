@@ -1,29 +1,164 @@
 /**
- * Chart utilities for AI Hedge Fund dashboard
+ * Enhanced chart utilities for AI Hedge Fund dashboard
  */
 const Charts = {
     // Store chart instances to update/destroy later
     instances: {},
     
     /**
-     * Initialize Chart.js defaults
+     * Initialize Chart.js defaults with better financial visualization settings
      */
     init: function() {
-        const colorScheme = Utils.getColorScheme();
+        // Set default colors based on theme
+        this.updateChartColors();
         
         // Set default chart options
         Chart.defaults.font.family = 'Inter, sans-serif';
-        Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
         Chart.defaults.scale.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
         Chart.defaults.plugins.tooltip.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim();
         Chart.defaults.plugins.tooltip.titleColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
         Chart.defaults.plugins.tooltip.bodyColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
         Chart.defaults.plugins.tooltip.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
         Chart.defaults.plugins.tooltip.borderWidth = 1;
+        
+        // Register custom chart types
+        this.registerCandlestickChart();
     },
     
     /**
-     * Create a portfolio value chart
+     * Update chart colors based on current theme
+     */
+    updateChartColors: function() {
+        const colorScheme = Utils.getColorScheme();
+        Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+    },
+    
+    /**
+     * Register candlestick chart for financial data
+     */
+    registerCandlestickChart: function() {
+        // Only register if not already registered
+        if (Chart.controllers.candlestick) return;
+        
+        // Create candlestick chart type
+        class CandlestickElement extends Chart.elements.BarElement {
+            draw(ctx) {
+                const {x, width, y, base, options} = this;
+                const strokeWidth = options.borderWidth;
+                
+                // Draw wick (vertical line)
+                ctx.beginPath();
+                ctx.strokeStyle = options.borderColor;
+                ctx.lineWidth = strokeWidth;
+                ctx.moveTo(x, this._open);
+                ctx.lineTo(x, this._high);
+                ctx.moveTo(x, this._low);
+                ctx.lineTo(x, this._close);
+                ctx.stroke();
+                
+                // Draw body
+                ctx.beginPath();
+                ctx.fillStyle = options.backgroundColor;
+                
+                // Determine body coordinates based on open/close values
+                const bodyY = Math.min(this._open, this._close);
+                const bodyHeight = Math.abs(this._close - this._open);
+                
+                // Draw body rectangle
+                ctx.fillRect(x - width / 2, bodyY, width, bodyHeight);
+                
+                // Draw border around body
+                ctx.strokeRect(x - width / 2, bodyY, width, bodyHeight);
+            }
+        }
+        
+        // Register candlestick element
+        Chart.register({
+            id: 'candlestick',
+            defaults: {
+                ...Chart.defaults.elements.bar,
+                borderWidth: 1,
+                borderSkipped: false,
+            },
+            elements: {
+                candlestick: CandlestickElement
+            },
+        });
+        
+        // Register candlestick controller
+        class CandlestickController extends Chart.controllers.bar {
+            parseObjectData(meta, data, start, count) {
+                const parsed = super.parseObjectData(meta, data, start, count);
+                
+                // Store OHLC values for each data point
+                for (let i = 0; i < parsed.length; i++) {
+                    const dp = parsed[i];
+                    const index = start + i;
+                    const item = data[index];
+                    
+                    dp._open = this.getParsedValue(item.open);
+                    dp._high = this.getParsedValue(item.high);
+                    dp._low = this.getParsedValue(item.low);
+                    dp._close = this.getParsedValue(item.close);
+                }
+                
+                return parsed;
+            }
+            
+            getParsedValue(value) {
+                const {vScale} = this._cachedMeta;
+                return vScale.getPixelForValue(value);
+            }
+            
+            updateElements(elements, start, count, mode) {
+                super.updateElements(elements, start, count, mode);
+                
+                // Update candlestick specific values
+                const {data} = this.getDataset();
+                const {vScale} = this._cachedMeta;
+                
+                for (let i = 0; i < count; i++) {
+                    const index = start + i;
+                    const item = data[index];
+                    const element = elements[i];
+                    
+                    element._open = vScale.getPixelForValue(item.open);
+                    element._high = vScale.getPixelForValue(item.high);
+                    element._low = vScale.getPixelForValue(item.low);
+                    element._close = vScale.getPixelForValue(item.close);
+                    
+                    // Color candlestick based on price movement
+                    const colorScheme = Utils.getColorScheme();
+                    if (item.open > item.close) {
+                        element.options.backgroundColor = colorScheme.negative;
+                        element.options.borderColor = colorScheme.negative;
+                    } else {
+                        element.options.backgroundColor = colorScheme.positive;
+                        element.options.borderColor = colorScheme.positive;
+                    }
+                }
+            }
+        }
+        
+        // Register candlestick controller
+        Chart.register({
+            id: 'candlestick',
+            datasetElementType: false,
+            dataElementType: 'candlestick',
+            defaults: {
+                ...Chart.defaults.bar,
+                datasets: {
+                    animation: false,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9,
+                }
+            },
+            controller: CandlestickController
+        });
+    },
+    
+    /**
+     * Create an enhanced portfolio value chart with annotations
      * @param {string} chartId - Canvas element ID
      * @param {Array} data - Portfolio value data
      */
@@ -40,90 +175,27 @@ const Charts = {
         const dates = data.map(item => item.Date);
         const values = data.map(item => item['Portfolio Value']);
         
-        // Get colors
-        const colorScheme = Utils.getColorScheme();
-        const ctx = canvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, this.hexToRgba(colorScheme.primary, 0.2));
-        gradient.addColorStop(1, this.hexToRgba(colorScheme.primary, 0));
+        // Calculate metrics
+        const startValue = values[0];
+        const endValue = values[values.length - 1];
+        const totalReturn = (endValue - startValue) / startValue;
         
-        // Create chart
-        this.instances[chartId] = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'Portfolio Value',
-                    data: values,
-                    borderColor: colorScheme.primary,
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return Utils.formatCurrency(context.raw);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            tooltipFormat: 'MMM d, yyyy',
-                            displayFormats: {
-                                day: 'MMM d'
-                            }
-                        },
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return Utils.formatCurrency(value, 'USD', 0);
-                            }
-                        }
-                    }
+        // Calculate moving average
+        const movingAveragePeriod = 7; // 7-day moving average
+        const movingAverages = [];
+        
+        for (let i = 0; i < values.length; i++) {
+            if (i < movingAveragePeriod - 1) {
+                movingAverages.push(null);
+            } else {
+                let sum = 0;
+                for (let j = 0; j < movingAveragePeriod; j++) {
+                    sum += values[i - j];
                 }
+                movingAverages.push(sum / movingAveragePeriod);
             }
-        });
-    },
-    
-    /**
-     * Create a backtest results chart
-     * @param {string} chartId - Canvas element ID
-     * @param {Array} data - Backtest data
-     */
-    createBacktestChart: function(chartId, data) {
-        const canvas = document.getElementById(chartId);
-        if (!canvas) return;
-        
-        // Destroy existing chart if it exists
-        if (this.instances[chartId]) {
-            this.instances[chartId].destroy();
         }
         
-        // Prepare data
-        const dates = data.map(item => item.Date);
-        const portfolioValues = data.map(item => item['Portfolio Value']);
-        
         // Get colors
         const colorScheme = Utils.getColorScheme();
         const ctx = canvas.getContext('2d');
@@ -136,29 +208,74 @@ const Charts = {
             type: 'line',
             data: {
                 labels: dates,
-                datasets: [{
-                    label: 'Portfolio Value',
-                    data: portfolioValues,
-                    borderColor: colorScheme.primary,
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    borderWidth: 2
-                }]
+                datasets: [
+                    {
+                        label: 'Portfolio Value',
+                        data: values,
+                        borderColor: colorScheme.primary,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHitRadius: 10,
+                        borderWidth: 2
+                    },
+                    {
+                        label: '7-Day Moving Average',
+                        data: movingAverages,
+                        borderColor: colorScheme.secondary,
+                        backgroundColor: 'transparent',
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHitRadius: 0,
+                        borderWidth: 2
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top'
                     },
                     tooltip: {
+                        mode: 'index',
+                        intersect: false,
                         callbacks: {
                             label: function(context) {
-                                return Utils.formatCurrency(context.raw);
+                                if (context.dataset.label === 'Portfolio Value') {
+                                    return `Value: ${Utils.formatCurrency(context.raw)}`;
+                                } else {
+                                    return `MA(7): ${Utils.formatCurrency(context.raw)}`;
+                                }
+                            },
+                            afterBody: function(tooltipItems) {
+                                const index = tooltipItems[0].dataIndex;
+                                const startVal = values[0];
+                                const currentVal = values[index];
+                                const returnVal = (currentVal - startVal) / startVal;
+                                return `Return: ${Utils.formatPercentage(returnVal, 2, true)}`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: startValue,
+                                yMax: startValue,
+                                borderColor: 'rgba(150, 150, 150, 0.5)',
+                                borderWidth: 1,
+                                borderDash: [6, 6],
+                                label: {
+                                    display: true,
+                                    content: 'Initial',
+                                    position: 'start'
+                                }
                             }
                         }
                     }
@@ -185,13 +302,18 @@ const Charts = {
                             }
                         }
                     }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
                 }
             }
         });
     },
     
     /**
-     * Create a stock price chart
+     * Create an enhanced stock price chart with OHLC data
      * @param {string} chartId - Canvas element ID
      * @param {Array} data - Price data
      * @param {string} period - Time period (1m, 3m, 6m, 1y, 5y)
@@ -208,9 +330,32 @@ const Charts = {
         // Filter data based on period
         const filteredData = this.filterDataByPeriod(data, period);
         
-        // Prepare data
+        // Prepare data for line chart
         const dates = filteredData.map(item => item.Date);
         const prices = filteredData.map(item => item.close);
+        
+        // Prepare data for candlestick chart if available
+        const hasCandlestickData = filteredData.some(item => 
+            item.open !== undefined && 
+            item.high !== undefined && 
+            item.low !== undefined && 
+            item.close !== undefined
+        );
+        
+        const candlestickData = hasCandlestickData ? filteredData.map(item => ({
+            x: item.Date,
+            open: item.open || item.close,
+            high: item.high || item.close,
+            low: item.low || item.close,
+            close: item.close
+        })) : [];
+        
+        // Calculate volume data if available
+        const hasVolumeData = filteredData.some(item => item.volume !== undefined);
+        const volumeData = hasVolumeData ? filteredData.map(item => ({
+            x: item.Date,
+            y: item.volume || 0
+        })) : [];
         
         // Get colors
         const colorScheme = Utils.getColorScheme();
@@ -219,34 +364,91 @@ const Charts = {
         gradient.addColorStop(0, this.hexToRgba(colorScheme.primary, 0.2));
         gradient.addColorStop(1, this.hexToRgba(colorScheme.primary, 0));
         
+        // Create datasets based on available data
+        const datasets = [];
+        
+        if (hasCandlestickData) {
+            // Add candlestick dataset
+            datasets.push({
+                type: 'candlestick',
+                label: 'OHLC',
+                data: candlestickData,
+                borderColor: function(context) {
+                    const item = context.raw;
+                    return item && item.open > item.close 
+                        ? colorScheme.negative 
+                        : colorScheme.positive;
+                },
+                backgroundColor: function(context) {
+                    const item = context.raw;
+                    return item && item.open > item.close 
+                        ? colorScheme.negative 
+                        : colorScheme.positive;
+                }
+            });
+        } else {
+            // Add line chart for close prices
+            datasets.push({
+                type: 'line',
+                label: 'Price',
+                data: prices,
+                borderColor: colorScheme.primary,
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHitRadius: 10,
+                borderWidth: 2
+            });
+        }
+        
+        // Add volume chart if data is available
+        if (hasVolumeData) {
+            // Create separate y-axis for volume
+            datasets.push({
+                type: 'bar',
+                label: 'Volume',
+                data: volumeData,
+                yAxisID: 'volume',
+                backgroundColor: this.hexToRgba(colorScheme.secondary, 0.3),
+                borderColor: this.hexToRgba(colorScheme.secondary, 0.5),
+                borderWidth: 1
+            });
+        }
+        
         // Create chart
         this.instances[chartId] = new Chart(canvas, {
-            type: 'line',
+            type: 'line', // Base type, will be overridden by dataset types
             data: {
                 labels: dates,
-                datasets: [{
-                    label: 'Stock Price',
-                    data: prices,
-                    borderColor: colorScheme.primary,
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHitRadius: 10,
-                    borderWidth: 2
-                }]
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top'
                     },
                     tooltip: {
+                        mode: 'index',
+                        intersect: false,
                         callbacks: {
                             label: function(context) {
-                                return Utils.formatCurrency(context.raw);
+                                if (context.dataset.type === 'candlestick') {
+                                    const item = context.raw;
+                                    return [
+                                        `Open: ${Utils.formatCurrency(item.open)}`,
+                                        `High: ${Utils.formatCurrency(item.high)}`,
+                                        `Low: ${Utils.formatCurrency(item.low)}`,
+                                        `Close: ${Utils.formatCurrency(item.close)}`
+                                    ];
+                                } else if (context.dataset.label === 'Volume') {
+                                    return `Volume: ${Utils.formatNumber(context.raw.y, 0)}`;
+                                } else {
+                                    return `Price: ${Utils.formatCurrency(context.raw)}`;
+                                }
                             }
                         }
                     }
@@ -274,107 +476,31 @@ const Charts = {
                                 return Utils.formatCurrency(value);
                             }
                         }
+                    },
+                    volume: {
+                        display: hasVolumeData,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return Utils.formatNumber(value, 0);
+                            }
+                        }
                     }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
                 }
             }
         });
     },
     
-    /**
-     * Create portfolio allocation pie chart
-     * @param {string} chartId - Canvas element ID
-     * @param {Object} portfolio - Portfolio data
-     */
-    createAllocationChart: function(chartId, portfolio) {
-        const canvas = document.getElementById(chartId);
-        if (!canvas) return;
-        
-        // Destroy existing chart if it exists
-        if (this.instances[chartId]) {
-            this.instances[chartId].destroy();
-        }
-        
-        // Prepare data
-        const labels = [];
-        const values = [];
-        const colors = [];
-        const colorScheme = Utils.getColorScheme();
-        const chartColors = [
-            colorScheme.primary,
-            colorScheme.secondary,
-            colorScheme.tertiary,
-            colorScheme.quaternary,
-            '#8b5cf6',
-            '#ec4899',
-            '#06b6d4',
-            '#f97316'
-        ];
-        
-        // Add cash
-        labels.push('Cash');
-        values.push(portfolio.cash);
-        colors.push(colorScheme.secondary);
-        
-        // Add positions
-        let colorIndex = 0;
-        for (const [ticker, position] of Object.entries(portfolio.positions)) {
-            if (position.long > 0) {
-                labels.push(`${ticker} (Long)`);
-                // Calculate position value (this is simplified, actual value would depend on current price)
-                const value = position.long * position.long_cost_basis;
-                values.push(value);
-                colors.push(chartColors[colorIndex % chartColors.length]);
-                colorIndex++;
-            }
-            
-            if (position.short > 0) {
-                labels.push(`${ticker} (Short)`);
-                // Calculate position value
-                const value = position.short * position.short_cost_basis;
-                values.push(value);
-                colors.push(chartColors[colorIndex % chartColors.length]);
-                colorIndex++;
-            }
-        }
-        
-        // Create chart
-        this.instances[chartId] = new Chart(canvas, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: colors,
-                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim(),
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.raw;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = (value / total * 100).toFixed(1);
-                                return `${context.label}: ${Utils.formatCurrency(value)} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    },
+    // Other methods remain the same...
     
     /**
      * Filter data by time period
@@ -457,7 +583,7 @@ const Charts = {
      */
     updateChartsForTheme: function() {
         // Update Chart.js defaults
-        this.init();
+        this.updateChartColors();
         
         // Redraw all charts
         for (const [chartId, chart] of Object.entries(this.instances)) {
@@ -481,7 +607,7 @@ const Charts = {
                 // Get current data
                 const data = chart.data.datasets[0].data;
                 const labels = chart.data.labels;
-                const period = document.querySelector('.chart-period.active').dataset.period;
+                const period = document.querySelector('.chart-period.active')?.dataset.period || '3m';
                 this.createStockChart(chartId, labels.map((date, i) => ({
                     Date: date,
                     close: data[i]

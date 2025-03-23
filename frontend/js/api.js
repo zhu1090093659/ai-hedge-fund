@@ -1,5 +1,5 @@
 /**
- * API utilities for interacting with the AI Hedge Fund backend
+ * Enhanced API utilities for interacting with the AI Hedge Fund backend
  */
 const API = {
     /**
@@ -25,7 +25,8 @@ const API = {
      */
     getHeaders: function() {
         const headers = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         };
         const apiKey = this.getApiKey();
         if (apiKey) {
@@ -35,12 +36,13 @@ const API = {
     },
 
     /**
-     * Make a GET request to the API
+     * Make a GET request to the API with enhanced error handling
      * @param {string} endpoint - API endpoint to call
      * @param {Object} params - URL parameters
+     * @param {number} retryCount - Number of retries on failure (default: 0)
      * @returns {Promise<any>} API response
      */
-    get: async function(endpoint, params = {}) {
+    get: async function(endpoint, params = {}, retryCount = 0) {
         try {
             const url = new URL(`${this.getBaseUrl()}${endpoint}`);
             Object.keys(params).forEach(key => {
@@ -49,23 +51,40 @@ const API = {
                 }
             });
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: this.getHeaders(),
-                timeout: CONFIG.API.TIMEOUT
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || `API Error: ${response.status} ${response.statusText}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('API GET Error:', error);
+            console.error(`API GET Error (${endpoint}):`, error);
             
-            // If simulation is enabled and we're in development mode, return mock data
-            if (CONFIG.API.SIMULATION && CONFIG.ENV === 'development') {
-                return this.getMockData(endpoint, params);
+            // Handle timeout errors specifically
+            if (error.name === 'AbortError') {
+                Utils.showToast('Request timed out. Please try again.', 'error');
+                throw new Error('Request timed out');
+            }
+            
+            // Retry logic for network errors
+            if (error.message.includes('NetworkError') && retryCount < CONFIG.API.MAX_RETRIES) {
+                Utils.showToast(`Network error. Retrying (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve(this.get(endpoint, params, retryCount + 1));
+                    }, 1000 * Math.pow(2, retryCount)); // Exponential backoff
+                });
             }
             
             throw error;
@@ -73,32 +92,51 @@ const API = {
     },
 
     /**
-     * Make a POST request to the API
+     * Make a POST request to the API with enhanced error handling
      * @param {string} endpoint - API endpoint to call
      * @param {Object} data - Request body
+     * @param {number} retryCount - Number of retries on failure (default: 0)
      * @returns {Promise<any>} API response
      */
-    post: async function(endpoint, data = {}) {
+    post: async function(endpoint, data = {}, retryCount = 0) {
         try {
             const url = `${this.getBaseUrl()}${endpoint}`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: this.getHeaders(),
                 body: JSON.stringify(data),
-                timeout: CONFIG.API.TIMEOUT
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || `API Error: ${response.status} ${response.statusText}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('API POST Error:', error);
+            console.error(`API POST Error (${endpoint}):`, error);
             
-            // If simulation is enabled and we're in development mode, return mock data
-            if (CONFIG.API.SIMULATION && CONFIG.ENV === 'development') {
-                return this.getMockData(endpoint, data);
+            // Handle timeout errors specifically
+            if (error.name === 'AbortError') {
+                Utils.showToast('Request timed out. Please try again.', 'error');
+                throw new Error('Request timed out');
+            }
+            
+            // Retry logic for network errors
+            if (error.message.includes('NetworkError') && retryCount < CONFIG.API.MAX_RETRIES) {
+                Utils.showToast(`Network error. Retrying (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve(this.post(endpoint, data, retryCount + 1));
+                    }, 1000 * Math.pow(2, retryCount)); // Exponential backoff
+                });
             }
             
             throw error;
@@ -106,7 +144,7 @@ const API = {
     },
 
     /**
-     * Check the status of a long-running task
+     * Check the status of a long-running task with improved error handling
      * @param {string} taskId - The ID of the task to check
      * @returns {Promise<Object>} Task status information
      */
@@ -115,46 +153,62 @@ const API = {
     },
 
     /**
-     * Poll a task until it completes or fails
+     * Enhanced polling for a task until it completes or fails
      * @param {string} taskId - The ID of the task to poll
      * @param {function} onProgress - Callback for progress updates
      * @param {function} onComplete - Callback for task completion
      * @param {function} onError - Callback for task errors
      * @param {number} interval - Polling interval in milliseconds
+     * @returns {Object} polling control - contains a cancel method
      */
     pollTask: function(taskId, onProgress, onComplete, onError, interval = 2000) {
+        let isCancelled = false;
+        let timeoutId = null;
+        
         const checkStatus = () => {
+            if (isCancelled) return;
+            
             this.checkTaskStatus(taskId)
                 .then(response => {
                     // Update progress
-                    if (onProgress) {
+                    if (onProgress && !isCancelled) {
                         onProgress(response.progress);
                     }
                     
                     if (response.status === 'completed') {
                         // Task completed
-                        if (onComplete) {
+                        if (onComplete && !isCancelled) {
                             onComplete(response.result);
                         }
                     } else if (response.status === 'error') {
                         // Task failed
-                        if (onError) {
+                        if (onError && !isCancelled) {
                             onError(response.error);
                         }
-                    } else {
+                    } else if (!isCancelled) {
                         // Task still running, poll again after the interval
-                        setTimeout(checkStatus, interval);
+                        timeoutId = setTimeout(checkStatus, interval);
                     }
                 })
                 .catch(error => {
-                    if (onError) {
+                    if (onError && !isCancelled) {
                         onError(error.message);
                     }
                 });
         };
         
         // Start polling
-        setTimeout(checkStatus, interval);
+        timeoutId = setTimeout(checkStatus, interval);
+        
+        // Return an object with a cancel method
+        return {
+            cancel: function() {
+                isCancelled = true;
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+            }
+        };
     },
 
     /**
@@ -322,19 +376,5 @@ const API = {
      */
     updatePortfolio: function(portfolio) {
         return this.post(CONFIG.API.ENDPOINTS.PORTFOLIO, portfolio);
-    },
-
-    /**
-     * Get mock data for development when API is not available
-     * This is retained for compatibility during development
-     * 
-     * @param {string} endpoint - API endpoint
-     * @param {Object} params - Request parameters
-     * @returns {Object} Mock data
-     */
-    getMockData: function(endpoint, params) {
-        // See original implementation for mock data
-        console.warn('Using mock data for endpoint:', endpoint);
-        return {};
     }
 };

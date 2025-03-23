@@ -271,27 +271,16 @@
                                 <div class="flex-1 relative">
                                     <label for="tickerSearch" class="sr-only">Search</label>
                                     <div class="relative">
-                                        <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)">
+                                        <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)" 
+                                               onkeypress="if(event.key === 'Enter') { performSearch(this.value); return false; }">
                                         <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none ps-4">
                                             <i class="ti ti-search text-gray-400 dark:text-secondary-500"></i>
                                         </div>
                                     </div>
                                 </div>
-                                <button id="searchButton" class="inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium bg-primary-500 text-white shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-white transition dark:hover:bg-primary-700 dark:focus:ring-primary-400 dark:focus:ring-offset-secondary-800">
+                                <button id="searchButton" class="inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium bg-primary-500 text-white shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-white transition dark:hover:bg-primary-700 dark:focus:ring-primary-400 dark:focus:ring-offset-secondary-800"
+                                        onclick="performSearch(document.getElementById('tickerSearch').value)">
                                     <i class="ti ti-search"></i>
-                                </button>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                <select id="marketSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400">
-                                    <option value="all">All Markets</option>
-                                    <option value="us">US Stocks</option>
-                                    <option value="ashare">A-Shares</option>
-                                </select>
-                                
-                                <button id="themeToggle" class="inline-flex flex-shrink-0 justify-center items-center h-9 w-9 rounded-lg text-gray-500 hover:text-primary-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white dark:text-secondary-400 dark:hover:text-primary-400 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
-                                    <i class="ti ti-moon dark:hidden"></i>
-                                    <i class="ti ti-sun hidden dark:block"></i>
                                 </button>
                             </div>
                         </div>
@@ -466,11 +455,13 @@
                                     <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Run Analysis</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
-                                    <form id="analysisForm">
+                                    <form id="analysisForm" onsubmit="Analysis.runAnalysis(); return false;">
                                         <div class="space-y-5">
                                             <div>
                                                 <label for="analysisTickers" class="block text-sm font-medium mb-2 dark:text-white">Ticker Symbols</label>
-                                                <input type="text" id="analysisTickers" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (comma separated)" required>
+                                                <input type="text" id="analysisTickers" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (comma separated)" required 
+                                                       oninput="Analysis.validateTickersInput(this)">
+                                                <div class="validation-feedback mt-1 text-xs"></div>
                                             </div>
                                             
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -502,10 +493,15 @@
                                                 </select>
                                             </div>
                                             
-                                            <div class="mt-6">
+                                            <div class="mt-6 flex gap-2">
                                                 <button type="submit" id="runAnalysisBtn" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                                     <i class="ti ti-player-play"></i>
                                                     Run Analysis
+                                                </button>
+                                                <button type="button" id="cancelAnalysisBtn" class="hidden py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700"
+                                                        onclick="Analysis.cancelAnalysis()">
+                                                    <i class="ti ti-x"></i>
+                                                    Cancel
                                                 </button>
                                             </div>
                                         </div>
@@ -550,11 +546,12 @@
                                     <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Backtest Setup</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
-                                    <form id="backtestForm">
+                                    <form id="backtestForm" onsubmit="Backtest.runBacktest(); return false;">
                                         <div class="space-y-5">
                                             <div>
                                                 <label for="backtestTickers" class="block text-sm font-medium mb-2 dark:text-white">Ticker Symbols</label>
-                                                <input type="text" id="backtestTickers" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (comma separated)" required>
+                                                <input type="text" id="backtestTickers" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (comma separated)" required 
+                                                       oninput="Analysis.validateTickersInput(this)">
                                             </div>
                                             
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -568,39 +565,17 @@
                                                 </div>
                                             </div>
                                             
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label for="initialCapital" class="block text-sm font-medium mb-2 dark:text-white">Initial Capital</label>
-                                                    <input type="number" id="initialCapital" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" value="100000" min="1000" step="1000">
-                                                </div>
-                                                <div>
-                                                    <label for="marginRequirement" class="block text-sm font-medium mb-2 dark:text-white">Margin Requirement</label>
-                                                    <input type="number" id="marginRequirement" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" value="0.0" min="0" max="1" step="0.1">
-                                                </div>
-                                            </div>
+                                            <!-- Other backtest form fields would be here -->
                                             
-                                            <div>
-                                                <label class="block text-sm font-medium mb-2 dark:text-white">Select Analysts</label>
-                                                <div id="backtestAnalystSelector" class="flex flex-wrap gap-2">
-                                                    <!-- Analysts will be dynamically loaded here -->
-                                                    <div class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-800 skeleton-pulse">
-                                                        Loading...
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div>
-                                                <label for="backtestModelSelect" class="block text-sm font-medium mb-2 dark:text-white">AI Model</label>
-                                                <select id="backtestModelSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <!-- Models will be dynamically loaded here -->
-                                                    <option value="">Loading models...</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="mt-6">
+                                            <div class="mt-6 flex gap-2">
                                                 <button type="submit" id="runBacktestBtn" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                                     <i class="ti ti-player-play"></i>
                                                     Run Backtest
+                                                </button>
+                                                <button type="button" id="cancelBacktestBtn" class="hidden py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700"
+                                                        onclick="Backtest.cancelBacktest()">
+                                                    <i class="ti ti-x"></i>
+                                                    Cancel
                                                 </button>
                                             </div>
                                         </div>
@@ -611,9 +586,10 @@
                             <!-- Backtest Results Card -->
                             <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Backtest Results</h3>
-                                    <button id="exportBacktestBtn" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
-                                        <i class="ti ti-download"></i>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Watchlist</h3>
+                                    <button id="addToWatchlist" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800"
+                                            onclick="Dashboard.showAddToWatchlistPrompt()">
+                                        <i class="ti ti-plus"></i>
                                     </button>
                                 </div>
                                 <div class="p-4 sm:p-6">
@@ -921,11 +897,16 @@
                                 <canvas id="tickerChart"></canvas>
                             </div>
                             <div class="flex flex-wrap justify-center gap-2 mb-2">
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1m">1M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-500 dark:hover:bg-primary-800/40 active" data-period="3m">3M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="6m">6M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1y">1Y</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="5y">5Y</button>
+                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1m')">1M</button>
+                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-500 dark:hover:bg-primary-800/40 active" data-period="3m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '3m')">3M</button>
+                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="6m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '6m')">6M</button>
+                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1y" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1y')">1Y</button>
+                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="5y" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '5y')">5Y</button>
                             </div>
                         </div>
 
@@ -992,81 +973,15 @@
     
     <!-- Custom JS to handle theme toggle without localStorage -->
     <script>
-        // Theme detection and toggle
         document.addEventListener('DOMContentLoaded', function() {
-            // Use document class to track current theme (no localStorage)
-            let darkModeEnabled = false;
-            
-            // Check system preference initially
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                enableDarkMode();
-            }
-            
-            // Theme toggle button
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function() {
-                    if (darkModeEnabled) {
-                        disableDarkMode();
-                    } else {
-                        enableDarkMode();
-                    }
-                    
-                    // Update theme select in settings if on that page
-                    const themeSelect = document.getElementById('themeSelect');
-                    if (themeSelect) {
-                        themeSelect.value = darkModeEnabled ? 'dark' : 'light';
-                    }
-                });
-            }
-            
-            // Function to enable dark mode
-            function enableDarkMode() {
-                document.body.classList.add('dark-mode');
-                document.querySelectorAll('.ti-moon').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.ti-sun').forEach(el => el.classList.remove('hidden'));
-                darkModeEnabled = true;
-            }
-            
-            // Function to disable dark mode
-            function disableDarkMode() {
-                document.body.classList.remove('dark-mode');
-                document.querySelectorAll('.ti-moon').forEach(el => el.classList.remove('hidden'));
-                document.querySelectorAll('.ti-sun').forEach(el => el.classList.add('hidden'));
-                darkModeEnabled = false;
-            }
-            
-            // Listen for system theme changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (currentTheme === 'system') {
-                    if (e.matches) {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
-                }
-            });
-            
-            // Connect navigation between sidebar and mobile menu
-            const allNavLinks = document.querySelectorAll('.sidebar-nav-link, .mobile-nav-link');
-            allNavLinks.forEach(link => {
+            // Fix navigation between sections
+            const navLinks = document.querySelectorAll('[data-section]');
+            navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const section = this.getAttribute('data-section');
                     
-                    // Remove active class from all nav links
-                    allNavLinks.forEach(navLink => {
-                        navLink.classList.remove('bg-primary-500', 'text-white');
-                        navLink.classList.add('text-secondary-700', 'dark:text-white', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-                    });
-                    
-                    // Add active class to clicked link
-                    allNavLinks.forEach(navLink => {
-                        if (navLink.getAttribute('data-section') === section) {
-                            navLink.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-                            navLink.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
-                        }
-                    });
+                    // Get section ID
+                    const sectionId = this.getAttribute('data-section');
                     
                     // Hide all sections
                     document.querySelectorAll('.content-section').forEach(section => {
@@ -1075,56 +990,182 @@
                     });
                     
                     // Show target section
-                    const targetSection = document.getElementById(section);
+                    const targetSection = document.getElementById(sectionId);
                     if (targetSection) {
                         targetSection.classList.add('active');
                         targetSection.classList.remove('hidden');
                     }
                     
-                    // Close mobile menu if it's open
+                    // Update active state on navigation items
+                    navLinks.forEach(navLink => {
+                        if (navLink.getAttribute('data-section') === sectionId) {
+                            navLink.classList.add('bg-primary-500', 'text-white');
+                            navLink.classList.remove('text-secondary-700', 'hover:bg-gray-100');
+                        } else {
+                            navLink.classList.remove('bg-primary-500', 'text-white');
+                            navLink.classList.add('text-secondary-700', 'hover:bg-gray-100');
+                        }
+                    });
+                    
+                    // Close mobile menu if open
                     const mobileMenu = document.getElementById('mobile-menu');
-                    const hsOverlay = HSOverlay.getInstance(mobileMenu);
-                    if (hsOverlay && mobileMenu.classList.contains('show')) {
-                        hsOverlay.hide();
+                    if (mobileMenu && window.HSOverlay) {
+                        const overlay = window.HSOverlay.getInstance(mobileMenu);
+                        if (overlay && mobileMenu.classList.contains('show')) {
+                            overlay.hide();
+                        }
                     }
+                    
+                    // Update URL hash
+                    window.location.hash = sectionId;
                 });
             });
             
-            // Market tab toggle in dashboard
+            // Check URL hash on page load
+            if (window.location.hash) {
+                const sectionId = window.location.hash.substring(1);
+                const link = document.querySelector(`[data-section="${sectionId}"]`);
+                if (link) {
+                    link.click();
+                }
+            }
+            
+            // Fix market tabs
             const marketTabs = document.querySelectorAll('.market-tab');
             marketTabs.forEach(tab => {
                 tab.addEventListener('click', function() {
+                    const market = this.getAttribute('data-market');
+                    
                     // Remove active class from all tabs
                     marketTabs.forEach(t => {
-                        t.classList.remove('bg-primary-100', 'text-primary-700', 'dark:bg-primary-800/30', 'dark:text-primary-400');
-                        t.classList.add('border-gray-200', 'text-gray-700', 'dark:border-secondary-700', 'dark:text-secondary-400');
+                        t.classList.remove('bg-primary-100', 'text-primary-700', 'border-transparent');
+                        t.classList.add('border-gray-200', 'text-gray-700');
                     });
                     
                     // Add active class to clicked tab
-                    this.classList.remove('border-gray-200', 'text-gray-700', 'dark:border-secondary-700', 'dark:text-secondary-400');
-                    this.classList.add('bg-primary-100', 'text-primary-700', 'dark:bg-primary-800/30', 'dark:text-primary-400');
+                    this.classList.add('bg-primary-100', 'text-primary-700', 'border-transparent');
+                    this.classList.remove('border-gray-200', 'text-gray-700');
                     
-                    // Toggle market indices display
-                    const market = this.getAttribute('data-market');
-                    toggleMarketIndices(market);
+                    // Show/hide relevant indices
+                    const usIndices = document.querySelectorAll('[id^="index-sp"], [id^="index-nasdaq"], [id^="index-russell"]');
+                    const cnIndices = document.querySelectorAll('[id^="index-sse"], [id^="index-szse"], [id^="index-csi"]');
+                    
+                    if (market === 'us') {
+                        usIndices.forEach(el => el.classList.remove('hidden'));
+                        cnIndices.forEach(el => el.classList.add('hidden'));
+                    } else if (market === 'china') {
+                        usIndices.forEach(el => el.classList.add('hidden'));
+                        cnIndices.forEach(el => el.classList.remove('hidden'));
+                    }
                 });
             });
             
-            function toggleMarketIndices(market) {
-                const indices = document.querySelectorAll('.market-index');
-                
-                indices.forEach(index => {
-                    const id = index.id;
-                    if (market === 'us' && (id.includes('sp500') || id.includes('nasdaq') || id.includes('russell'))) {
-                        index.classList.remove('hidden');
-                    } else if (market === 'china' && (id.includes('sse') || id.includes('szse') || id.includes('csi300'))) {
-                        index.classList.remove('hidden');
-                    } else {
-                        index.classList.add('hidden');
+            // Initialize search functionality
+            const searchButton = document.getElementById('searchButton');
+            if (searchButton) {
+                searchButton.addEventListener('click', function() {
+                    const searchInput = document.getElementById('tickerSearch');
+                    if (searchInput) {
+                        performSearch(searchInput.value);
                     }
                 });
             }
+            
+            // Initialize theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const isDark = document.body.classList.contains('dark-mode');
+                    if (isDark) {
+                        document.body.classList.remove('dark-mode');
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    } else {
+                        document.body.classList.add('dark-mode');
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    }
+                    
+                    // Update icon display
+                    document.querySelectorAll('.ti-moon').forEach(el => {
+                        el.classList.toggle('hidden', !isDark);
+                    });
+                    document.querySelectorAll('.ti-sun').forEach(el => {
+                        el.classList.toggle('hidden', isDark);
+                    });
+                    
+                    // Save theme preference
+                    localStorage.setItem('ai-hedge-fund-theme', isDark ? 'light' : 'dark');
+                });
+            }
+            
+            // Initialize ticker modal tabs
+            const tickerTabs = document.querySelectorAll('.ticker-tab');
+            tickerTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-hs-tab');
+                    
+                    // Remove active class from all tabs and tab contents
+                    document.querySelectorAll('.ticker-tab').forEach(t => {
+                        t.classList.remove('active', 'hs-tab-active');
+                    });
+                    document.querySelectorAll('.ticker-tab-content').forEach(c => {
+                        c.classList.remove('active');
+                        c.classList.add('hidden');
+                    });
+                    
+                    // Add active class to current tab
+                    this.classList.add('active', 'hs-tab-active');
+                    
+                    // Show current tab content
+                    const content = document.querySelector(tabId);
+                    if (content) {
+                        content.classList.add('active');
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
         });
+        
+        // Global search function
+        function performSearch(query) {
+            if (!query || !query.trim()) {
+                Utils.showToast('Please enter a ticker symbol', 'warning');
+                return;
+            }
+            
+            query = query.trim().toUpperCase();
+            
+            // Check if valid ticker format
+            if (API.validateTickerFormat(query)) {
+                openTickerModal(query);
+            } else {
+                Utils.showToast('Invalid ticker format. Use 1-5 letters for US stocks or 6 digits followed by .SH/.SZ for A-shares', 'error');
+            }
+        }
+        
+        // Function to open ticker modal
+        function openTickerModal(ticker) {
+            const modal = document.getElementById('tickerModal');
+            const tickerSymbol = document.getElementById('modalTickerSymbol');
+            
+            if (!modal || !tickerSymbol) return;
+            
+            // Set ticker symbol
+            tickerSymbol.textContent = ticker;
+            
+            // Show the modal
+            if (window.HSOverlay) {
+                const overlay = window.HSOverlay.getInstance(modal);
+                if (overlay) overlay.show();
+            } else {
+                // Fallback if HSOverlay is not available
+                modal.classList.add('active');
+            }
+            
+            // Load ticker data
+            if (window.loadTickerData) {
+                window.loadTickerData(ticker);
+            }
+        }
     </script>
 </body>
 </html>

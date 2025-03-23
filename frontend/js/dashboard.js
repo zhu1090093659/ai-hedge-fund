@@ -13,6 +13,12 @@ const Dashboard = {
         
         // Set up event listeners
         document.getElementById('addToWatchlist').addEventListener('click', this.showAddToWatchlistPrompt);
+        
+        // Add event listener for the empty watchlist add button
+        const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
+        if (emptyWatchlistAddBtn) {
+            emptyWatchlistAddBtn.addEventListener('click', this.showAddToWatchlistPrompt);
+        }
     },
     
     /**
@@ -97,17 +103,23 @@ const Dashboard = {
         if (watchlist.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td colspan="5" class="text-center">
-                    <p>Your watchlist is empty.</p>
-                    <button id="emptyWatchlistAdd" class="btn-secondary">
-                        <i class="fas fa-plus"></i> Add Stocks
-                    </button>
+                <td colspan="5" class="px-4 py-6 text-center">
+                    <div class="flex flex-col items-center">
+                        <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                        <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">Your watchlist is empty</p>
+                        <button id="dynamicEmptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                            <i class="ti ti-plus"></i> Add Stocks
+                        </button>
+                    </div>
                 </td>
             `;
             watchlistTable.appendChild(row);
             
-            // Add event listener
-            watchlistTable.querySelector('#emptyWatchlistAdd').addEventListener('click', this.showAddToWatchlistPrompt);
+            // Add event listener to the dynamically created button
+            const dynamicBtn = watchlistTable.querySelector('#dynamicEmptyWatchlistAdd');
+            if (dynamicBtn) {
+                dynamicBtn.addEventListener('click', this.showAddToWatchlistPrompt);
+            }
             return;
         }
         
@@ -131,11 +143,11 @@ const Dashboard = {
             <td>--</td>
             <td>--</td>
             <td>
-                <button class="btn-icon analyze-btn" data-ticker="${ticker}">
-                    <i class="fas fa-robot"></i>
+                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700 analyze-btn" data-ticker="${ticker}">
+                    <i class="ti ti-robot"></i>
                 </button>
-                <button class="btn-icon remove-btn" data-ticker="${ticker}">
-                    <i class="fas fa-trash"></i>
+                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700 remove-btn" data-ticker="${ticker}">
+                    <i class="ti ti-trash"></i>
                 </button>
             </td>
         `;

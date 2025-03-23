@@ -3,7 +3,7 @@
  */
 const CONFIG = {
     // Environment configuration (production or development)
-    ENV: 'production',  // Set to 'development' to enable mock data
+    ENV: 'production',
     
     // API configuration
     API: {
@@ -25,8 +25,10 @@ const CONFIG = {
         },
         // Default request timeout in milliseconds
         TIMEOUT: 30000,
-        // Whether to use simulation data as fallback when API is not available
-        SIMULATION: false
+        // Maximum number of retries for failed requests
+        MAX_RETRIES: 3,
+        // Whether to show detailed error messages
+        VERBOSE_ERRORS: false
     },
 
     // Default markets
