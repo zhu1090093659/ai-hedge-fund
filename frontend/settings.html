@@ -1,40 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="zh" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - AI Hedge Fund</title>
+    <title>设置 - AI Hedge Fund</title>
     
-    <!-- Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="third_party_resource/tailwind.min.css" rel="stylesheet">
     
-    <!-- Preline UI via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
-    
-    <!-- Tabler Icons via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="third_party_resource/tabler-icons.min.css">
     
     <!-- Custom CSS for theme colors -->
     <link rel="stylesheet" href="css/styles.css">
     
+    <!-- 玻璃拟态效果 CSS -->
+    <link rel="stylesheet" href="css/glassmorphism.css">
+    
     <!-- Flatpickr (Date picker) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="third_party_resource/flatpickr.min.css">
     
     <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="third_party_resource/chart.min.js"></script>
 </head>
 
 <body class="bg-gray-50 dark:bg-secondary-900 text-secondary-900 dark:text-white h-full flex flex-col antialiased">
     <!-- Mobile menu modal -->
     <div id="mobile-menu" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
-            <div class="flex flex-col bg-white dark:bg-secondary-800 border border-gray-200 dark:border-secondary-700 shadow-lg rounded-xl h-full">
+            <div class="glass-modal flex flex-col bg-white dark:bg-secondary-800 shadow-lg rounded-xl h-full">
                 <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
                     <h3 class="font-medium text-gray-800 dark:text-white">
                         <i class="ti ti-chart-line-up mr-2"></i>AI Hedge Fund
                     </h3>
                     <button type="button" class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 text-secondary-500 hover:text-secondary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white dark:text-secondary-400 dark:hover:text-secondary-200 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800" data-hs-overlay="#mobile-menu">
-                        <span class="sr-only">Close</span>
+                        <span class="sr-only">关闭</span>
                         <i class="ti ti-x"></i>
                     </button>
                 </div>
@@ -43,38 +43,38 @@
                         <li>
                             <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg text-secondary-700 hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-dashboard text-lg"></i>
-                                <span>Dashboard</span>
+                                <span>控制面板</span>
                             </a>
                         </li>
                         <li>
                             <a href="analysis.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-robot text-lg"></i>
-                                <span>AI Analysis</span>
+                                <span>AI分析</span>
                             </a>
                         </li>
                         <li>
                             <a href="backtest.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-history text-lg"></i>
-                                <span>Backtesting</span>
+                                <span>回测</span>
                             </a>
                         </li>
                         <li>
                             <a href="portfolio.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-briefcase text-lg"></i>
-                                <span>Portfolio</span>
+                                <span>投资组合</span>
                             </a>
                         </li>
                         <li>
-                            <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                            <a href="settings.html" class="mobile-nav-link gradient-btn flex items-center gap-2 p-2.5 text-sm rounded-lg text-white hover:bg-primary-600 dark:hover:bg-primary-700">
                                 <i class="ti ti-settings text-lg"></i>
-                                <span>Settings</span>
+                                <span>设置</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
                 <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
                     <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                    <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
 
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full bg-white border-r border-gray-200 dark:bg-secondary-800 dark:border-secondary-700">
+        <aside class="glass-sidebar hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full">
             <div class="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-secondary-700">
                 <i class="ti ti-chart-line-up text-2xl text-primary-600 dark:text-primary-400"></i>
                 <h2 class="text-lg font-semibold text-secondary-900 dark:text-white">AI Hedge Fund</h2>
@@ -92,45 +92,45 @@
                     <li>
                         <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 text-secondary-700 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-dashboard text-lg"></i>
-                            <span>Dashboard</span>
+                            <span>控制面板</span>
                         </a>
                     </li>
                     <li>
                         <a href="analysis.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-robot text-lg"></i>
-                            <span>AI Analysis</span>
+                            <span>AI分析</span>
                         </a>
                     </li>
                     <li>
                         <a href="backtest.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-history text-lg"></i>
-                            <span>Backtesting</span>
+                            <span>回测</span>
                         </a>
                     </li>
                     <li>
                         <a href="portfolio.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-briefcase text-lg"></i>
-                            <span>Portfolio</span>
+                            <span>投资组合</span>
                         </a>
                     </li>
                     <li>
-                        <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                        <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-settings text-lg"></i>
-                            <span>Settings</span>
+                            <span>设置</span>
                         </a>
                     </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
                 <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
             </div>
         </aside>
 
         <!-- Main Content -->
         <div class="flex-1 lg:ml-64 flex flex-col">
             <!-- Header -->
-            <header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b border-gray-200 text-sm py-2.5 sm:py-4 dark:bg-secondary-800 dark:border-secondary-700">
+            <header class="glass-header sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full py-2.5 sm:py-4">
                 <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 md:px-8" aria-label="Global">
                     <div class="flex mr-5 lg:mr-0 lg:hidden">
                         <a class="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="AI Hedge Fund">
@@ -139,18 +139,18 @@
                     </div>
                     <div class="flex items-center justify-between w-full lg:justify-end">
                         <button type="button" class="lg:hidden text-secondary-500 hover:text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-300" data-hs-overlay="#mobile-menu" aria-controls="mobile-menu" aria-label="Toggle navigation">
-                            <span class="sr-only">Toggle navigation</span>
+                            <span class="sr-only">切换导航</span>
                             <i class="ti ti-menu-2 text-xl"></i>
                         </button>
 
                         <div class="flex flex-1 items-center gap-2 sm:gap-4 lg:flex-grow-0 lg:flex-basis-auto">
                             <div class="flex-1 relative">
-                                <label for="tickerSearch" class="sr-only">Search</label>
+                                <label for="tickerSearch" class="sr-only">搜索</label>
                                 <div class="relative">
-                                    <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)" 
+                                    <input type="text" id="tickerSearch" class="glass-input py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="搜索股票代码 (如: AAPL, 600519.SH)" 
                                            onkeypress="if(event.key === 'Enter') { performSearch(this.value); return false; }">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none ps-4">
-                                        <i class="ti ti-search text-gray-400 dark:text-secondary-500"></i>
+                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-4">
+                                        <i class="ti ti-search text-gray-400"></i>
                                     </div>
                                 </div>
                             </div>
@@ -169,68 +169,68 @@
                 <section id="settings" class="content-section p-4 sm:p-6 lg:p-8 active">
                     <div class="max-w-[85rem] mx-auto">
                         <div class="flex flex-col gap-2 mb-6">
-                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Settings</h2>
-                            <p class="text-secondary-600 dark:text-secondary-400">Configure application settings</p>
+                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">设置</h2>
+                            <p class="text-secondary-600 dark:text-secondary-400">配置应用程序设置</p>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                             <!-- API Configuration Card -->
-                            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <div class="glass-card bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700 mb-8">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">API Configuration</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">API 配置</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <form id="apiSettingsForm">
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                             <div>
-                                                <label for="apiEndpoint" class="block text-sm font-medium mb-2 dark:text-white">API Endpoint</label>
-                                                <input type="url" id="apiEndpoint" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="https://api.example.com">
+                                                <label for="apiEndpoint" class="block text-sm font-medium mb-2 dark:text-white">API 端点</label>
+                                                <input type="url" id="apiEndpoint" class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="https://api.example.com">
                                             </div>
                                             <div>
-                                                <label for="apiKey" class="block text-sm font-medium mb-2 dark:text-white">API Key (optional)</label>
-                                                <input type="password" id="apiKey" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Your API key">
+                                                <label for="apiKey" class="block text-sm font-medium mb-2 dark:text-white">API 密钥 (可选)</label>
+                                                <input type="password" id="apiKey" class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="您的 API 密钥">
                                             </div>
                                         </div>
                                         <div class="mt-6 flex flex-wrap gap-4 justify-end">
-                                            <button type="button" id="testApiBtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                Test Connection
+                                            <button type="button" id="testConnectionBtn" class="glass-button-outline py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg">
+                                                测试连接
                                             </button>
-                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                                Save API Settings
+                                            <button type="submit" class="gradient-btn py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg text-white">
+                                                保存 API 设置
                                             </button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-
+                            
                             <!-- Display Settings Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <div class="glass-card bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Display Settings</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">显示设置</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <form id="displaySettingsForm">
                                         <div class="space-y-5">
                                             <div>
-                                                <label for="themeSelect" class="block text-sm font-medium mb-2 dark:text-white">Theme</label>
-                                                <select id="themeSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <option value="light">Light</option>
-                                                    <option value="dark">Dark</option>
-                                                    <option value="system">System Default</option>
+                                                <label for="themeSelect" class="block text-sm font-medium mb-2 dark:text-white">主题</label>
+                                                <select id="themeSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="light">亮色</option>
+                                                    <option value="dark">暗色</option>
+                                                    <option value="system">系统默认</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <label for="colorSelect" class="block text-sm font-medium mb-2 dark:text-white">Chart Colors</label>
-                                                <select id="colorSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <option value="DEFAULT">Default</option>
-                                                    <option value="MONOCHROME">Monochrome</option>
-                                                    <option value="COLORBLIND">Colorblind Friendly</option>
-                                                    <option value="VIBRANT">Vibrant</option>
+                                                <label for="colorSelect" class="block text-sm font-medium mb-2 dark:text-white">图表颜色</label>
+                                                <select id="colorSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="DEFAULT">默认</option>
+                                                    <option value="MONOCHROME">单色</option>
+                                                    <option value="COLORBLIND">色盲友好</option>
+                                                    <option value="VIBRANT">鲜艳</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <label for="dateFormatSelect" class="block text-sm font-medium mb-2 dark:text-white">Date Format</label>
-                                                <select id="dateFormatSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                <label for="dateFormatSelect" class="block text-sm font-medium mb-2 dark:text-white">日期格式</label>
+                                                <select id="dateFormatSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
                                                     <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                                                     <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                                                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -238,52 +238,52 @@
                                             </div>
                                         </div>
                                         <div class="mt-6 flex flex-wrap gap-4 justify-end">
-                                            <button type="button" id="resetDisplayBtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                Reset to Default
+                                            <button type="button" id="resetDisplayBtn" class="glass-button-outline py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg">
+                                                重置为默认
                                             </button>
-                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                                Save Display Settings
+                                            <button type="submit" class="gradient-btn py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg text-white">
+                                                保存显示设置
                                             </button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-
+                            
                             <!-- Data Settings Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <div class="glass-card bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Data Settings</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">数据设置</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <form id="dataSettingsForm">
                                         <div class="space-y-5">
                                             <div>
-                                                <label for="defaultMarketSelect" class="block text-sm font-medium mb-2 dark:text-white">Default Market</label>
-                                                <select id="defaultMarketSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <option value="all">All Markets</option>
-                                                    <option value="us">US Stocks</option>
-                                                    <option value="ashare">A-Shares</option>
+                                                <label for="defaultMarketSelect" class="block text-sm font-medium mb-2 dark:text-white">默认市场</label>
+                                                <select id="defaultMarketSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="all">所有市场</option>
+                                                    <option value="us">美国股票</option>
+                                                    <option value="ashare">A股</option>
                                                 </select>
                                             </div>
                                             <div>
-                                                <label for="defaultAnalystSelect" class="block text-sm font-medium mb-2 dark:text-white">Default Analysts</label>
-                                                <select id="defaultAnalystSelect" multiple class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" size="4">
-                                                    <!-- Analysts will be dynamically loaded here -->
-                                                    <option value="">Loading analysts...</option>
+                                                <label for="defaultAnalystSelect" class="block text-sm font-medium mb-2 dark:text-white">默认分析师</label>
+                                                <select id="defaultAnalystSelect" multiple class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" size="4">
+                                                    <!-- 分析师将在此动态加载 -->
+                                                    <option value="">加载分析师...</option>
                                                 </select>
-                                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd key to select multiple analysts</p>
+                                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">按住 Ctrl/Cmd 键选择多个分析师</p>
                                             </div>
                                             <div>
-                                                <label for="defaultModelSelect" class="block text-sm font-medium mb-2 dark:text-white">Default AI Model</label>
-                                                <select id="defaultModelSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <!-- Models will be dynamically loaded here -->
-                                                    <option value="">Loading models...</option>
+                                                <label for="defaultModelSelect" class="block text-sm font-medium mb-2 dark:text-white">默认 AI 模型</label>
+                                                <select id="defaultModelSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <!-- 模型将在此动态加载 -->
+                                                    <option value="">加载模型...</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="mt-6 flex justify-end">
-                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                                Save Data Settings
+                                            <button type="submit" class="gradient-btn py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg text-white">
+                                                保存数据设置
                                             </button>
                                         </div>
                                     </form>
@@ -298,158 +298,317 @@
 
     <!-- Ticker Modal -->
     <div id="tickerModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
-        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto h-[calc(100%-3.5rem)]">
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl h-full dark:bg-secondary-800 dark:border-secondary-700">
+        <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
+            <div class="glass-modal flex flex-col bg-white shadow-lg rounded-xl h-full dark:bg-secondary-800">
                 <div class="flex justify-between items-center py-3 px-4 border-b dark:border-secondary-700">
                     <h3 id="modalTickerSymbol" class="font-bold text-gray-800 dark:text-white text-xl">AAPL</h3>
                     <button type="button" class="flex justify-center items-center w-7 h-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-secondary-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" data-hs-overlay="#tickerModal">
-                        <span class="sr-only">Close</span>
+                        <span class="sr-only">关闭</span>
                         <i class="ti ti-x"></i>
                     </button>
                 </div>
                 <div class="p-4 overflow-y-auto">
                     <nav class="flex space-x-2 mb-6" aria-label="Tabs" role="tablist">
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600 active" id="overview-tab-btn" data-hs-tab="#overview-tab" aria-controls="overview-tab" role="tab">
-                            Overview
+                            概览
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="chart-tab-btn" data-hs-tab="#chart-tab" aria-controls="chart-tab" role="tab">
-                            Chart
+                            图表
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="financials-tab-btn" data-hs-tab="#financials-tab" aria-controls="financials-tab" role="tab">
-                            Financials
+                            财务
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="news-tab-btn" data-hs-tab="#news-tab" aria-controls="news-tab" role="tab">
-                            News
+                            新闻
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="analysis-tab-btn" data-hs-tab="#analysis-tab" aria-controls="analysis-tab" role="tab">
-                            Analysis
+                            分析
                         </button>
                     </nav>
 
                     <div class="mt-3">
                         <div id="overview-tab" class="ticker-tab-content active" role="tabpanel" aria-labelledby="overview-tab-btn">
-                            <!-- Overview content -->
+                            <!-- 概览内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
-                                    <span class="sr-only">Loading...</span>
+                                    <span class="sr-only">加载中...</span>
                                 </div>
                             </div>
                         </div>
 
                         <div id="chart-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="chart-tab-btn">
-                            <!-- Chart content -->
+                            <!-- 图表内容 -->
                             <div class="chart-container mb-4">
                                 <canvas id="tickerChart"></canvas>
                             </div>
                             <div class="flex flex-wrap justify-center gap-2 mb-2">
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1m" 
-                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1m')">1M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-500 dark:hover:bg-primary-800/40 active" data-period="3m" 
-                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '3m')">3M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="6m" 
-                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '6m')">6M</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="1y" 
-                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1y')">1Y</button>
-                                <button class="chart-period py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700" data-period="5y" 
-                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '5y')">5Y</button>
+                                <button class="chart-period glass-button-sm py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full" data-period="1m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1m')">1月</button>
+                                <button class="chart-period glass-button-sm-active py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full" data-period="3m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '3m')">3月</button>
+                                <button class="chart-period glass-button-sm py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full" data-period="6m" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '6m')">6月</button>
+                                <button class="chart-period glass-button-sm py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full" data-period="1y" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '1y')">1年</button>
+                                <button class="chart-period glass-button-sm py-2 px-4 inline-flex items-center gap-x-2 text-xs font-medium rounded-full" data-period="5y" 
+                                        onclick="updateTickerChart(document.getElementById('modalTickerSymbol').textContent, '5y')">5年</button>
                             </div>
                         </div>
 
                         <div id="financials-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="financials-tab-btn">
-                            <!-- Financials content -->
+                            <!-- 财务内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
-                                    <span class="sr-only">Loading...</span>
+                                    <span class="sr-only">加载中...</span>
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div id="news-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="news-tab-btn">
-                            <!-- News content -->
+                            <!-- 新闻内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
-                                    <span class="sr-only">Loading...</span>
+                                    <span class="sr-only">加载中...</span>
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div id="analysis-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="analysis-tab-btn">
-                            <!-- Analysis content -->
+                            <!-- 分析内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
-                                    <span class="sr-only">Loading...</span>
+                                    <span class="sr-only">加载中...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-secondary-700">
-                    <button id="addToWatchlistBtn" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                        <i class="ti ti-plus"></i> Add to Watchlist
+                    <button id="addToWatchlistBtn" class="glass-button-outline py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg">
+                        <i class="ti ti-plus"></i> 添加到关注列表
                     </button>
-                    <button id="analyzeTickerBtn" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                        <i class="ti ti-robot"></i> Analyze Stock
+                    <button id="analyzeTickerBtn" class="gradient-btn py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg text-white">
+                        <i class="ti ti-robot"></i> 分析股票
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Toastify.js for notifications -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+    <script src="third_party_resource/toastify.js"></script>
     
     <!-- Flatpickr date picker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script src="third_party_resource/flatpickr.min.js"></script>
     
-    <!-- Preline UI JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+    <!-- Preline UI JS -->
+    <script src="third_party_resource/preline.min.js"></script>
     
-    <!-- Original scripts - keep these to preserve functionality -->
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
+    <!-- Custom JS -->
     <script src="js/utils.js"></script>
     <script src="js/charts.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/analysis.js"></script>
-    <script src="js/backtest.js"></script>
-    <script src="js/portfolio.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/ticker-actions.js"></script>
+    <script src="js/watchlist-actions.js"></script>
     
-    <!-- Settings-specific initialization -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Settings module
-            Settings.init();
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化设置页面
+            loadApiSettings();
+            loadDisplaySettings();
+            loadDataSettings();
             
-            // Initialize Analysis module for analyst and model loading
-            Analysis.init();
-            
-            // Add event listeners for settings forms
+            // 表单提交处理
             document.getElementById('apiSettingsForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                Settings.saveApiSettings();
+                saveApiSettings();
             });
             
             document.getElementById('displaySettingsForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                Settings.saveDisplaySettings();
+                saveDisplaySettings();
             });
             
             document.getElementById('dataSettingsForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                Settings.saveDataSettings();
+                saveDataSettings();
             });
             
-            // Add event listener for reset button
+            // 测试连接按钮
+            document.getElementById('testConnectionBtn').addEventListener('click', function() {
+                testApiConnection();
+            });
+            
+            // 重置显示设置按钮
             document.getElementById('resetDisplayBtn').addEventListener('click', function() {
-                Settings.resetDisplaySettings();
-            });
-            
-            // Add event listener for test API button
-            document.getElementById('testApiBtn').addEventListener('click', function() {
-                Settings.testApiConnection();
+                resetDisplaySettings();
             });
         });
+        
+        // 加载 API 设置
+        function loadApiSettings() {
+            // 模拟从本地存储加载数据
+            const apiEndpoint = localStorage.getItem('apiEndpoint') || '';
+            const apiKey = localStorage.getItem('apiKey') || '';
+            
+            document.getElementById('apiEndpoint').value = apiEndpoint;
+            document.getElementById('apiKey').value = apiKey;
+        }
+        
+        // 保存 API 设置
+        function saveApiSettings() {
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            const apiKey = document.getElementById('apiKey').value;
+            
+            localStorage.setItem('apiEndpoint', apiEndpoint);
+            localStorage.setItem('apiKey', apiKey);
+            
+            showToast('API 设置已保存', 'success');
+        }
+        
+        // 测试 API 连接
+        function testApiConnection() {
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            
+            if (!apiEndpoint) {
+                showToast('请输入 API 端点', 'error');
+                return;
+            }
+            
+            // 模拟 API 测试
+            setTimeout(function() {
+                showToast('API 连接测试成功', 'success');
+            }, 1500);
+        }
+        
+        // 加载显示设置
+        function loadDisplaySettings() {
+            const theme = localStorage.getItem('theme') || 'system';
+            const chartColors = localStorage.getItem('chartColors') || 'DEFAULT';
+            const dateFormat = localStorage.getItem('dateFormat') || 'YYYY-MM-DD';
+            
+            document.getElementById('themeSelect').value = theme;
+            document.getElementById('colorSelect').value = chartColors;
+            document.getElementById('dateFormatSelect').value = dateFormat;
+        }
+        
+        // 保存显示设置
+        function saveDisplaySettings() {
+            const theme = document.getElementById('themeSelect').value;
+            const chartColors = document.getElementById('colorSelect').value;
+            const dateFormat = document.getElementById('dateFormatSelect').value;
+            
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('chartColors', chartColors);
+            localStorage.setItem('dateFormat', dateFormat);
+            
+            // 应用主题
+            applyTheme(theme);
+            
+            showToast('显示设置已保存', 'success');
+        }
+        
+        // 重置显示设置
+        function resetDisplaySettings() {
+            document.getElementById('themeSelect').value = 'system';
+            document.getElementById('colorSelect').value = 'DEFAULT';
+            document.getElementById('dateFormatSelect').value = 'YYYY-MM-DD';
+            
+            saveDisplaySettings();
+            showToast('显示设置已重置为默认', 'info');
+        }
+        
+        // 加载数据设置
+        function loadDataSettings() {
+            const defaultMarket = localStorage.getItem('defaultMarket') || 'all';
+            document.getElementById('defaultMarketSelect').value = defaultMarket;
+            
+            // 模拟加载分析师列表
+            setTimeout(function() {
+                const analystSelect = document.getElementById('defaultAnalystSelect');
+                analystSelect.innerHTML = '';
+                
+                const analysts = [
+                    { id: 'analyst1', name: '分析师 1' },
+                    { id: 'analyst2', name: '分析师 2' },
+                    { id: 'analyst3', name: '分析师 3' },
+                    { id: 'analyst4', name: '分析师 4' },
+                    { id: 'analyst5', name: '分析师 5' }
+                ];
+                
+                analysts.forEach(analyst => {
+                    const option = document.createElement('option');
+                    option.value = analyst.id;
+                    option.textContent = analyst.name;
+                    analystSelect.appendChild(option);
+                });
+                
+                // 设置已选分析师
+                const selectedAnalysts = JSON.parse(localStorage.getItem('defaultAnalysts') || '[]');
+                selectedAnalysts.forEach(id => {
+                    const option = analystSelect.querySelector(`option[value="${id}"]`);
+                    if (option) option.selected = true;
+                });
+            }, 500);
+            
+            // 模拟加载模型列表
+            setTimeout(function() {
+                const modelSelect = document.getElementById('defaultModelSelect');
+                modelSelect.innerHTML = '';
+                
+                const models = [
+                    { id: 'model1', name: '基础分析模型' },
+                    { id: 'model2', name: '高级预测模型' },
+                    { id: 'model3', name: '市场趋势模型' },
+                    { id: 'model4', name: '财务分析模型' }
+                ];
+                
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.textContent = model.name;
+                    modelSelect.appendChild(option);
+                });
+                
+                // 设置已选模型
+                const defaultModel = localStorage.getItem('defaultModel') || 'model1';
+                const option = modelSelect.querySelector(`option[value="${defaultModel}"]`);
+                if (option) option.selected = true;
+            }, 500);
+        }
+        
+        // 保存数据设置
+        function saveDataSettings() {
+            const defaultMarket = document.getElementById('defaultMarketSelect').value;
+            localStorage.setItem('defaultMarket', defaultMarket);
+            
+            // 保存已选分析师
+            const analystSelect = document.getElementById('defaultAnalystSelect');
+            const selectedAnalysts = Array.from(analystSelect.selectedOptions).map(option => option.value);
+            localStorage.setItem('defaultAnalysts', JSON.stringify(selectedAnalysts));
+            
+            // 保存已选模型
+            const defaultModel = document.getElementById('defaultModelSelect').value;
+            localStorage.setItem('defaultModel', defaultModel);
+            
+            showToast('数据设置已保存', 'success');
+        }
+        
+        // 显示提示信息
+        function showToast(message, type) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                className: type,
+                style: {
+                    background: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
+                }
+            }).showToast();
+        }
     </script>
 </body>
 </html>

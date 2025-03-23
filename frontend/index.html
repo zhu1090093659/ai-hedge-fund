@@ -1,34 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="zh" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Hedge Fund</title>
     
-    <!-- Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="third_party_resource/tailwind.min.css" rel="stylesheet">
     
-    <!-- Preline UI via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
-    
-    <!-- Tabler Icons via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="third_party_resource/tabler-icons.min.css">
     
     <!-- Custom CSS for theme colors -->
     <link rel="stylesheet" href="css/styles.css">
     
+    <!-- 玻璃拟态效果 CSS -->
+    <link rel="stylesheet" href="css/glassmorphism.css">
+    
     <!-- Flatpickr (Date picker) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="third_party_resource/flatpickr.min.css">
     
     <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="third_party_resource/chart.min.js"></script>
 </head>
 
 <body class="bg-gray-50 dark:bg-secondary-900 text-secondary-900 dark:text-white h-full flex flex-col antialiased">
     <!-- Mobile menu modal -->
     <div id="mobile-menu" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
-            <div class="flex flex-col bg-white dark:bg-secondary-800 border border-gray-200 dark:border-secondary-700 shadow-lg rounded-xl h-full">
+            <div class="glass-modal flex flex-col bg-white dark:bg-secondary-800 shadow-lg rounded-xl h-full">
                 <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
                     <h3 class="font-medium text-gray-800 dark:text-white">
                         <i class="ti ti-chart-line-up mr-2"></i>AI Hedge Fund
@@ -41,40 +41,40 @@
                 <nav class="p-4 overflow-y-auto">
                     <ul class="space-y-1.5">
                         <li>
-                            <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                            <a href="index.html" class="mobile-nav-link gradient-btn flex items-center gap-2 p-2.5 text-sm rounded-lg text-white hover:bg-primary-600 dark:hover:bg-primary-700">
                                 <i class="ti ti-dashboard text-lg"></i>
-                                <span>Dashboard</span>
+                                <span>控制面板</span>
                             </a>
                         </li>
                         <li>
                             <a href="analysis.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-robot text-lg"></i>
-                                <span>AI Analysis</span>
+                                <span>AI分析</span>
                             </a>
                         </li>
                         <li>
                             <a href="backtest.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-history text-lg"></i>
-                                <span>Backtesting</span>
+                                <span>回测</span>
                             </a>
                         </li>
                         <li>
                             <a href="portfolio.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-briefcase text-lg"></i>
-                                <span>Portfolio</span>
+                                <span>投资组合</span>
                             </a>
                         </li>
                         <li>
                             <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-settings text-lg"></i>
-                                <span>Settings</span>
+                                <span>设置</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
                 <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
                     <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                    <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
 
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full bg-white border-r border-gray-200 dark:bg-secondary-800 dark:border-secondary-700">
+        <aside class="glass-sidebar hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full">
             <div class="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-secondary-700">
                 <i class="ti ti-chart-line-up text-2xl text-primary-600 dark:text-primary-400"></i>
                 <h2 class="text-lg font-semibold text-secondary-900 dark:text-white">AI Hedge Fund</h2>
@@ -90,47 +90,47 @@
             <nav class="flex-1 overflow-y-auto p-4">
                 <ul class="space-y-1.5">
                     <li>
-                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 text-secondary-700 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-dashboard text-lg"></i>
-                            <span>Dashboard</span>
+                            <span>控制面板</span>
                         </a>
                     </li>
                     <li>
                         <a href="analysis.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-robot text-lg"></i>
-                            <span>AI Analysis</span>
+                            <span>AI分析</span>
                         </a>
                     </li>
                     <li>
                         <a href="backtest.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-history text-lg"></i>
-                            <span>Backtesting</span>
+                            <span>回测</span>
                         </a>
                     </li>
                     <li>
                         <a href="portfolio.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-briefcase text-lg"></i>
-                            <span>Portfolio</span>
+                            <span>投资组合</span>
                         </a>
                     </li>
                     <li>
                         <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-settings text-lg"></i>
-                            <span>Settings</span>
+                            <span>设置</span>
                         </a>
                     </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
                 <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
             </div>
         </aside>
 
         <!-- Main Content -->
         <div class="flex-1 lg:ml-64 flex flex-col">
             <!-- Header -->
-            <header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b border-gray-200 text-sm py-2.5 sm:py-4 dark:bg-secondary-800 dark:border-secondary-700">
+            <header class="glass-header sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full py-2.5 sm:py-4">
                 <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 md:px-8" aria-label="Global">
                     <div class="flex mr-5 lg:mr-0 lg:hidden">
                         <a class="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="AI Hedge Fund">
@@ -145,12 +145,12 @@
 
                         <div class="flex flex-1 items-center gap-2 sm:gap-4 lg:flex-grow-0 lg:flex-basis-auto">
                             <div class="flex-1 relative">
-                                <label for="tickerSearch" class="sr-only">Search</label>
+                                <label for="tickerSearch" class="sr-only">搜索</label>
                                 <div class="relative">
-                                    <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)" 
+                                    <input type="text" id="tickerSearch" class="glass-input py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="搜索股票代码 (如：AAPL, 600519.SH)" 
                                            onkeypress="if(event.key === 'Enter') { performSearch(this.value); return false; }">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none ps-4">
-                                        <i class="ti ti-search text-gray-400 dark:text-secondary-500"></i>
+                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-4">
+                                        <i class="ti ti-search text-gray-400"></i>
                                     </div>
                                 </div>
                             </div>
@@ -169,32 +169,32 @@
                 <section id="dashboard" class="content-section p-4 sm:p-6 lg:p-8 active">
                     <div class="max-w-[85rem] mx-auto">
                         <div class="flex flex-col gap-2 mb-6">
-                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Dashboard</h2>
-                            <p class="text-secondary-600 dark:text-secondary-400">Market overview and portfolio summary</p>
+                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">控制面板</h2>
+                            <p class="text-secondary-600 dark:text-secondary-400">市场概览和投资组合总览</p>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                            <!-- Portfolio Summary Card -->
+                            <!-- 投资组合总览卡片 -->
                             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Portfolio Summary</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">投资组合总览</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                                         <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Total Value</p>
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">总价值</p>
                                             <p id="totalValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
                                         </div>
                                         <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Cash</p>
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">现金</p>
                                             <p id="cashValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
                                         </div>
                                         <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Invested</p>
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">投资</p>
                                             <p id="investedValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
                                         </div>
                                         <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Daily Change</p>
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">日变化</p>
                                             <p id="dailyChange" class="text-lg font-semibold text-success-500">0.00%</p>
                                         </div>
                                     </div>
@@ -204,49 +204,49 @@
                                 </div>
                             </div>
 
-                            <!-- Market Overview Card -->
+                            <!-- 市场概览卡片 -->
                             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Market Overview</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">市场概览</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <div class="inline-flex flex-wrap items-center gap-2 mb-4">
                                         <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-400 dark:hover:bg-primary-800/40 active" data-market="us">
-                                            US
+                                            美国
                                         </button>
                                         <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-secondary-700 dark:text-secondary-400 dark:hover:bg-secondary-700" data-market="china">
-                                            China
+                                            中国
                                         </button>
                                     </div>
                                     
                                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                         <div id="index-sp500" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">S&P 500</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">标普500</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-success-500 index-change">--</p>
                                         </div>
                                         <div id="index-nasdaq" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">NASDAQ</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">纳斯达克</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-success-500 index-change">--</p>
                                         </div>
                                         <div id="index-russell" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Russell 2000</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">罗素2000</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-danger-500 index-change">--</p>
                                         </div>
                                         <div id="index-sse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SSE Composite</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">上证综指</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-success-500 index-change">--</p>
                                         </div>
                                         <div id="index-szse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SZSE Component</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">深证综指</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-success-500 index-change">--</p>
                                         </div>
                                         <div id="index-csi300" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">CSI 300</p>
+                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">沪深300</p>
                                             <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
                                             <p class="text-sm font-medium text-danger-500 index-change">--</p>
                                         </div>
@@ -254,10 +254,10 @@
                                 </div>
                             </div>
 
-                            <!-- Watchlist Card -->
+                            <!-- 自选股卡片 -->
                             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Watchlist</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">自选股</h3>
                                     <button id="addToWatchlist" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
                                         <i class="ti ti-plus"></i>
                                     </button>
@@ -267,11 +267,11 @@
                                         <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Price</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Change</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Signal</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Actions</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">股票代码</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">价格</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">变化</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">信号</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">操作</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="watchlistTable" class="divide-y divide-gray-200 dark:divide-secondary-700">
@@ -280,9 +280,9 @@
                                                     <td colspan="5" class="px-4 py-6 text-center">
                                                         <div class="flex flex-col items-center">
                                                             <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">Your watchlist is empty</p>
+                                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">您的自选股列表为空</p>
                                                             <button id="emptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                                <i class="ti ti-plus"></i> Add Stocks
+                                                                <i class="ti ti-plus"></i> 添加股票
                                                             </button>
                                                         </div>
                                                     </td>
@@ -293,19 +293,19 @@
                                 </div>
                             </div>
 
-                            <!-- Recent Analysis Card -->
+                            <!-- 最近分析卡片 -->
                             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Recent Analyses</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">最近分析</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <div id="recentAnalysesList" class="space-y-4">
                                         <!-- Empty state -->
                                         <div class="empty-state flex flex-col items-center justify-center py-8">
                                             <i class="ti ti-robot text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">No recent analyses</p>
+                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">没有最近的分析</p>
                                             <button id="emptyAnalysisGo" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                <i class="ti ti-robot"></i> Run Analysis
+                                                <i class="ti ti-robot"></i> 运行分析
                                             </button>
                                         </div>
                                     </div>
@@ -318,39 +318,39 @@
         </div>
     </div>
 
-    <!-- Ticker Modal -->
+    <!-- 股票详情模态框 -->
     <div id="tickerModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto h-[calc(100%-3.5rem)]">
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl h-full dark:bg-secondary-800 dark:border-secondary-700">
+            <div class="glass-modal flex flex-col h-full">
                 <div class="flex justify-between items-center py-3 px-4 border-b dark:border-secondary-700">
                     <h3 id="modalTickerSymbol" class="font-bold text-gray-800 dark:text-white text-xl">AAPL</h3>
                     <button type="button" class="flex justify-center items-center w-7 h-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-secondary-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" data-hs-overlay="#tickerModal">
-                        <span class="sr-only">Close</span>
+                        <span class="sr-only">关闭</span>
                         <i class="ti ti-x"></i>
                     </button>
                 </div>
                 <div class="p-4 overflow-y-auto">
                     <nav class="flex space-x-2 mb-6" aria-label="Tabs" role="tablist">
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600 active" id="overview-tab-btn" data-hs-tab="#overview-tab" aria-controls="overview-tab" role="tab">
-                            Overview
+                            概览
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="chart-tab-btn" data-hs-tab="#chart-tab" aria-controls="chart-tab" role="tab">
-                            Chart
+                            图表
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="financials-tab-btn" data-hs-tab="#financials-tab" aria-controls="financials-tab" role="tab">
-                            Financials
+                            财务
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="news-tab-btn" data-hs-tab="#news-tab" aria-controls="news-tab" role="tab">
-                            News
+                            新闻
                         </button>
                         <button type="button" class="ticker-tab hs-tab-active:font-semibold hs-tab-active:border-primary-600 hs-tab-active:text-primary-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-primary-600" id="analysis-tab-btn" data-hs-tab="#analysis-tab" aria-controls="analysis-tab" role="tab">
-                            Analysis
+                            分析
                         </button>
                     </nav>
 
                     <div class="mt-3">
                         <div id="overview-tab" class="ticker-tab-content active" role="tabpanel" aria-labelledby="overview-tab-btn">
-                            <!-- Overview content -->
+                            <!-- 概览内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
                                     <span class="sr-only">Loading...</span>
@@ -359,7 +359,7 @@
                         </div>
 
                         <div id="chart-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="chart-tab-btn">
-                            <!-- Chart content -->
+                            <!-- 图表内容 -->
                             <div class="chart-container mb-4">
                                 <canvas id="tickerChart"></canvas>
                             </div>
@@ -378,7 +378,7 @@
                         </div>
 
                         <div id="financials-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="financials-tab-btn">
-                            <!-- Financials content -->
+                            <!-- 财务内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
                                     <span class="sr-only">Loading...</span>
@@ -387,7 +387,7 @@
                         </div>
 
                         <div id="news-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="news-tab-btn">
-                            <!-- News content -->
+                            <!-- 新闻内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
                                     <span class="sr-only">Loading...</span>
@@ -396,7 +396,7 @@
                         </div>
 
                         <div id="analysis-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="analysis-tab-btn">
-                            <!-- Analysis content -->
+                            <!-- 分析内容 -->
                             <div class="flex items-center justify-center h-40">
                                 <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
                                     <span class="sr-only">Loading...</span>
@@ -407,10 +407,10 @@
                 </div>
                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-secondary-700">
                     <button id="addToWatchlistBtn" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                        <i class="ti ti-plus"></i> Add to Watchlist
+                        <i class="ti ti-plus"></i> 添加到自选股
                     </button>
-                    <button id="analyzeTickerBtn" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                        <i class="ti ti-robot"></i> Analyze Stock
+                    <button id="analyzeStockBtn" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-primary-600 bg-white text-primary-600 hover:bg-primary-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:border-primary-500 dark:text-primary-400 dark:hover:bg-primary-800/30 pulse">
+                        <i class="ti ti-robot"></i> AI分析
                     </button>
                 </div>
             </div>
@@ -418,104 +418,70 @@
     </div>
 
     <!-- Toastify.js for notifications -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+    <script src="third_party_resource/toastify.js"></script>
     
-    <!-- Flatpickr date picker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <!-- Underscore.js -->
+    <script src="third_party_resource/underscore-min.js"></script>
     
-    <!-- Preline UI JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+    <!-- Market Data -->
+    <script src="js/market-data.js"></script>
     
-    <!-- Original scripts - keep these to preserve functionality -->
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/analysis.js"></script>
-    <script src="js/backtest.js"></script>
-    <script src="js/portfolio.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Watchlist Management -->
+    <script src="js/watchlist.js"></script>
     
-    <!-- 新增的交互处理脚本 -->
-    <script src="js/dashboard-interactions.js"></script>
+    <!-- Watchlist Actions -->
     <script src="js/watchlist-actions.js"></script>
     
-    <!-- Dashboard-specific initialization -->
+    <!-- Stock Analysis -->
+    <script src="js/analysis.js"></script>
+    
+    <!-- App.js -->
+    <script src="js/app.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Dashboard module
-            Dashboard.init();
-            
-            // 直接添加事件监听器，确保功能正常工作
-            
-            // 1. 处理Add Stocks按钮
-            const addToWatchlistBtn = document.getElementById('addToWatchlist');
-            if (addToWatchlistBtn) {
-                addToWatchlistBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
-            
-            // 为空watchlist中的Add Stocks按钮添加事件监听器
-            const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
-            if (emptyWatchlistAddBtn) {
-                emptyWatchlistAddBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
-            
-            // 2. 处理Run Analysis按钮
-            const emptyAnalysisGoBtn = document.getElementById('emptyAnalysisGo');
-            if (emptyAnalysisGoBtn) {
-                emptyAnalysisGoBtn.addEventListener('click', function() {
-                    window.location.href = 'analysis.html';
-                });
-            }
-            
-            // 3. 处理Market Overview切换
-            const marketTabs = document.querySelectorAll('.market-tab');
-            marketTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 移除所有标签的active类
-                    marketTabs.forEach(t => t.classList.remove('active'));
-                    
-                    // 为点击的标签添加active类
-                    this.classList.add('active');
-                    
-                    // 显示/隐藏相关指数
-                    const market = this.dataset.market;
-                    const indices = document.querySelectorAll('.market-index');
-                    
-                    indices.forEach(index => {
-                        const id = index.id;
-                        if (market === 'us' && (id.includes('sp500') || id.includes('nasdaq') || id.includes('russell'))) {
-                            index.style.display = '';
-                        } else if (market === 'china' && (id.includes('sse') || id.includes('szse') || id.includes('csi300'))) {
-                            index.style.display = '';
-                        } else {
-                            index.style.display = 'none';
-                        }
-                    });
-                });
+        // 添加渐变背景效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 激活当前侧边栏项
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                if (window.location.pathname.includes(link.getAttribute('href'))) {
+                    link.classList.add('gradient-btn', 'text-white');
+                    link.classList.remove('hover:bg-gray-100', 'text-secondary-700', 'dark:hover:bg-secondary-700');
+                }
             });
+            
+            // 为市场数据卡片添加动画效果
+            const cards = document.querySelectorAll('.data-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // 设置状态指示器
+            function updateStatusIndicators() {
+                // 仅作为示例，实际应根据真实数据设置
+                const indexStatus = document.getElementById('indexStatusIndicator');
+                if (indexStatus) {
+                    const randomValue = Math.random();
+                    if (randomValue > 0.6) {
+                        indexStatus.className = 'status-indicator status-up';
+                    } else if (randomValue > 0.3) {
+                        indexStatus.className = 'status-indicator status-down';
+                    } else {
+                        indexStatus.className = 'status-indicator status-neutral';
+                    }
+                }
+                
+                const vixStatus = document.getElementById('vixStatusIndicator');
+                if (vixStatus) {
+                    const randomValue = Math.random();
+                    if (randomValue > 0.7) {
+                        vixStatus.className = 'status-indicator status-down';
+                    } else {
+                        vixStatus.className = 'status-indicator status-up';
+                    }
+                }
+            }
+            
+            updateStatusIndicators();
         });
     </script>
 </body>

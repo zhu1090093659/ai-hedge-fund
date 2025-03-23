@@ -1,40 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="zh" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Analysis - AI Hedge Fund</title>
+    <title>AI分析 - AI Hedge Fund</title>
     
-    <!-- Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="third_party_resource/tailwind.min.css" rel="stylesheet">
     
-    <!-- Preline UI via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
-    
-    <!-- Tabler Icons via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="third_party_resource/tabler-icons.min.css">
     
     <!-- Custom CSS for theme colors -->
     <link rel="stylesheet" href="css/styles.css">
     
+    <!-- 玻璃拟态效果 CSS -->
+    <link rel="stylesheet" href="css/glassmorphism.css">
+    
     <!-- Flatpickr (Date picker) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <link rel="stylesheet" href="third_party_resource/flatpickr.min.css">
     
     <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="third_party_resource/chart.min.js"></script>
 </head>
 
 <body class="bg-gray-50 dark:bg-secondary-900 text-secondary-900 dark:text-white h-full flex flex-col antialiased">
     <!-- Mobile menu modal -->
     <div id="mobile-menu" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
-            <div class="flex flex-col bg-white dark:bg-secondary-800 border border-gray-200 dark:border-secondary-700 shadow-lg rounded-xl h-full">
+            <div class="glass-modal flex flex-col bg-white dark:bg-secondary-800 shadow-lg rounded-xl h-full">
                 <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
                     <h3 class="font-medium text-gray-800 dark:text-white">
                         <i class="ti ti-chart-line-up mr-2"></i>AI Hedge Fund
                     </h3>
                     <button type="button" class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 text-secondary-500 hover:text-secondary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white dark:text-secondary-400 dark:hover:text-secondary-200 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800" data-hs-overlay="#mobile-menu">
-                        <span class="sr-only">Close</span>
+                        <span class="sr-only">关闭</span>
                         <i class="ti ti-x"></i>
                     </button>
                 </div>
@@ -43,38 +43,38 @@
                         <li>
                             <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg text-secondary-700 hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-dashboard text-lg"></i>
-                                <span>Dashboard</span>
+                                <span>控制面板</span>
                             </a>
                         </li>
                         <li>
-                            <a href="analysis.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                            <a href="analysis.html" class="mobile-nav-link gradient-btn flex items-center gap-2 p-2.5 text-sm rounded-lg text-white hover:bg-primary-600 dark:hover:bg-primary-700">
                                 <i class="ti ti-robot text-lg"></i>
-                                <span>AI Analysis</span>
+                                <span>AI分析</span>
                             </a>
                         </li>
                         <li>
                             <a href="backtest.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-history text-lg"></i>
-                                <span>Backtesting</span>
+                                <span>回测</span>
                             </a>
                         </li>
                         <li>
                             <a href="portfolio.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-briefcase text-lg"></i>
-                                <span>Portfolio</span>
+                                <span>投资组合</span>
                             </a>
                         </li>
                         <li>
                             <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-settings text-lg"></i>
-                                <span>Settings</span>
+                                <span>设置</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
                 <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
                     <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                    <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
 
     <div class="flex h-full">
         <!-- Sidebar -->
-        <aside class="hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full bg-white border-r border-gray-200 dark:bg-secondary-800 dark:border-secondary-700">
+        <aside class="glass-sidebar hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full">
             <div class="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-secondary-700">
                 <i class="ti ti-chart-line-up text-2xl text-primary-600 dark:text-primary-400"></i>
                 <h2 class="text-lg font-semibold text-secondary-900 dark:text-white">AI Hedge Fund</h2>
@@ -92,45 +92,45 @@
                     <li>
                         <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 text-secondary-700 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-dashboard text-lg"></i>
-                            <span>Dashboard</span>
+                            <span>控制面板</span>
                         </a>
                     </li>
                     <li>
-                        <a href="analysis.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                        <a href="analysis.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-robot text-lg"></i>
-                            <span>AI Analysis</span>
+                            <span>AI分析</span>
                         </a>
                     </li>
                     <li>
                         <a href="backtest.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-history text-lg"></i>
-                            <span>Backtesting</span>
+                            <span>回测</span>
                         </a>
                     </li>
                     <li>
                         <a href="portfolio.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-briefcase text-lg"></i>
-                            <span>Portfolio</span>
+                            <span>投资组合</span>
                         </a>
                     </li>
                     <li>
                         <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-settings text-lg"></i>
-                            <span>Settings</span>
+                            <span>设置</span>
                         </a>
                     </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
                 <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">&copy; 2025 AI Hedge Fund</p>
             </div>
         </aside>
 
         <!-- Main Content -->
         <div class="flex-1 lg:ml-64 flex flex-col">
             <!-- Header -->
-            <header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b border-gray-200 text-sm py-2.5 sm:py-4 dark:bg-secondary-800 dark:border-secondary-700">
+            <header class="glass-header sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full py-2.5 sm:py-4">
                 <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 md:px-8" aria-label="Global">
                     <div class="flex mr-5 lg:mr-0 lg:hidden">
                         <a class="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="AI Hedge Fund">
@@ -139,18 +139,18 @@
                     </div>
                     <div class="flex items-center justify-between w-full lg:justify-end">
                         <button type="button" class="lg:hidden text-secondary-500 hover:text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-300" data-hs-overlay="#mobile-menu" aria-controls="mobile-menu" aria-label="Toggle navigation">
-                            <span class="sr-only">Toggle navigation</span>
+                            <span class="sr-only">切换导航</span>
                             <i class="ti ti-menu-2 text-xl"></i>
                         </button>
 
                         <div class="flex flex-1 items-center gap-2 sm:gap-4 lg:flex-grow-0 lg:flex-basis-auto">
                             <div class="flex-1 relative">
-                                <label for="tickerSearch" class="sr-only">Search</label>
+                                <label for="tickerSearch" class="sr-only">搜索</label>
                                 <div class="relative">
-                                    <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)" 
+                                    <input type="text" id="tickerSearch" class="glass-input py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="搜索股票代码 (如: AAPL, 600519.SH)" 
                                            onkeypress="if(event.key === 'Enter') { performSearch(this.value); return false; }">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none ps-4">
-                                        <i class="ti ti-search text-gray-400 dark:text-secondary-500"></i>
+                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-4">
+                                        <i class="ti ti-search text-gray-400"></i>
                                     </div>
                                 </div>
                             </div>
@@ -169,64 +169,64 @@
                 <section id="analysis" class="content-section p-4 sm:p-6 lg:p-8 active">
                     <div class="max-w-[85rem] mx-auto">
                         <div class="flex flex-col gap-2 mb-6">
-                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">AI Analysis</h2>
-                            <p class="text-secondary-600 dark:text-secondary-400">Analyze stocks using multi-agent AI system</p>
+                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">AI分析</h2>
+                            <p class="text-secondary-600 dark:text-secondary-400">使用多智能体AI系统分析股票</p>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                             <!-- Analysis Form Card -->
-                            <div class="lg:col-span-1 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <div class="lg:col-span-1 glass-card bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Run Analysis</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">运行分析</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
                                     <form id="analysisForm" onsubmit="Analysis.runAnalysis(); return false;">
                                         <div class="space-y-5">
                                             <div>
-                                                <label for="analysisTickers" class="block text-sm font-medium mb-2 dark:text-white">Ticker Symbols</label>
-                                                <input type="text" id="analysisTickers" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (comma separated)" required 
+                                                <label for="analysisTickers" class="block text-sm font-medium mb-2 dark:text-white">股票代码</label>
+                                                <input type="text" id="analysisTickers" class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="AAPL, MSFT, 600519.SH (逗号分隔)" required 
                                                        oninput="Analysis.validateTickersInput(this)">
                                                 <div class="validation-feedback mt-1 text-xs"></div>
                                             </div>
                                             
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label for="analysisStartDate" class="block text-sm font-medium mb-2 dark:text-white">Start Date</label>
-                                                    <input type="text" id="analysisStartDate" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="YYYY-MM-DD">
+                                                    <label for="analysisStartDate" class="block text-sm font-medium mb-2 dark:text-white">开始日期</label>
+                                                    <input type="text" id="analysisStartDate" class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="YYYY-MM-DD">
                                                 </div>
                                                 <div>
-                                                    <label for="analysisEndDate" class="block text-sm font-medium mb-2 dark:text-white">End Date</label>
-                                                    <input type="text" id="analysisEndDate" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="YYYY-MM-DD">
+                                                    <label for="analysisEndDate" class="block text-sm font-medium mb-2 dark:text-white">结束日期</label>
+                                                    <input type="text" id="analysisEndDate" class="glass-input py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="YYYY-MM-DD">
                                                 </div>
                                             </div>
                                             
                                             <div>
-                                                <label class="block text-sm font-medium mb-2 dark:text-white">Select Analysts</label>
+                                                <label class="block text-sm font-medium mb-2 dark:text-white">选择分析师</label>
                                                 <div id="analystSelector" class="flex flex-wrap gap-2">
-                                                    <!-- Analysts will be dynamically loaded here -->
+                                                    <!-- 分析师将在此动态加载 -->
                                                     <div class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-800 skeleton-pulse">
-                                                        Loading...
+                                                        加载中...
                                                     </div>
                                                 </div>
                                             </div>
                                             
                                             <div>
-                                                <label for="modelSelect" class="block text-sm font-medium mb-2 dark:text-white">AI Model</label>
-                                                <select id="modelSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
-                                                    <!-- Models will be dynamically loaded here -->
-                                                    <option value="">Loading models...</option>
+                                                <label for="modelSelect" class="block text-sm font-medium mb-2 dark:text-white">AI模型</label>
+                                                <select id="modelSelect" class="glass-input py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <!-- 模型将在此动态加载 -->
+                                                    <option value="">加载模型...</option>
                                                 </select>
                                             </div>
                                             
                                             <div class="mt-6 flex gap-2">
-                                                <button type="submit" id="runAnalysisBtn" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                <button type="submit" id="runAnalysisBtn" class="gradient-btn w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                                     <i class="ti ti-player-play"></i>
-                                                    Run Analysis
+                                                    运行分析
                                                 </button>
-                                                <button type="button" id="cancelAnalysisBtn" class="hidden py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700"
+                                                <button type="button" id="cancelAnalysisBtn" class="glass-btn hidden py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700"
                                                         onclick="Analysis.cancelAnalysis()">
                                                     <i class="ti ti-x"></i>
-                                                    Cancel
+                                                    取消
                                                 </button>
                                             </div>
                                         </div>
@@ -235,9 +235,9 @@
                             </div>
 
                             <!-- Analysis Results Card -->
-                            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <div class="lg:col-span-2 glass-card bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Analysis Results</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">分析结果</h3>
                                     <button id="exportAnalysisBtn" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
                                         <i class="ti ti-download"></i>
                                     </button>
@@ -245,10 +245,10 @@
                                 <div class="p-4 sm:p-6">
                                     <div id="analysisStatus" class="text-center p-8">
                                         <i class="ti ti-robot text-4xl text-gray-400 dark:text-secondary-600 mb-3"></i>
-                                        <p class="text-gray-500 dark:text-secondary-400">No analysis running. Start one using the form.</p>
+                                        <p class="text-gray-500 dark:text-secondary-400">没有正在运行的分析。使用表单启动一个。</p>
                                     </div>
                                     <div id="analysisOutput" class="hidden">
-                                        <!-- Analysis results will be displayed here -->
+                                        <!-- 分析结果将在此显示 -->
                                     </div>
                                 </div>
                             </div>
@@ -261,35 +261,462 @@
 
     <!-- Ticker Modal -->
     <div id="tickerModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
-        <!-- Modal content - same as in layout.html -->
-        <!-- ... Ticker Modal Content ... -->
+        <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
+            <div class="glass-modal flex flex-col bg-white dark:bg-secondary-800 shadow-lg rounded-xl max-h-full">
+                <!-- Modal header -->
+                <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                    <h3 class="font-medium text-gray-800 dark:text-white">
+                        <i class="ti ti-chart-candlestick mr-2"></i><span id="modalTickerSymbol"></span>
+                    </h3>
+                    <button type="button" class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 text-secondary-500 hover:text-secondary-700 focus:outline-none" data-hs-overlay="#tickerModal">
+                        <span class="sr-only">关闭</span>
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="p-4 overflow-y-auto">
+                    <!-- Tab navigation -->
+                    <div class="flex border-b border-gray-200 dark:border-secondary-700 mb-4">
+                        <button id="overview-tab-btn" class="ticker-tab-btn py-2 px-4 inline-flex items-center gap-2 border-b-2 border-transparent text-sm font-medium text-secondary-500 hover:text-secondary-700 active" aria-selected="true" role="tab">
+                            <i class="ti ti-chart-line"></i> 概览
+                        </button>
+                        <button id="analysis-tab-btn" class="ticker-tab-btn py-2 px-4 inline-flex items-center gap-2 border-b-2 border-transparent text-sm font-medium text-secondary-500 hover:text-secondary-700" aria-selected="false" role="tab">
+                            <i class="ti ti-report-analytics"></i> 分析
+                        </button>
+                    </div>
+                    <!-- Tab content -->
+                    <div class="mt-3">
+                        <div id="overview-tab" class="ticker-tab-content active" role="tabpanel" aria-labelledby="overview-tab-btn">
+                            <!-- Overview content -->
+                            <div class="flex items-center justify-center h-40">
+                                <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
+                                    <span class="sr-only">加载中...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="analysis-tab" class="ticker-tab-content hidden" role="tabpanel" aria-labelledby="analysis-tab-btn">
+                            <!-- Analysis content -->
+                            <div class="flex items-center justify-center h-40">
+                                <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
+                                    <span class="sr-only">加载中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-secondary-700">
+                    <button id="addToWatchlistBtn" class="glass-btn py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                        <i class="ti ti-plus"></i> 添加到自选
+                    </button>
+                    <button id="analyzeTickerBtn" class="gradient-btn py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary-500 text-white shadow-sm hover:bg-primary-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-700 dark:hover:bg-primary-800">
+                        <i class="ti ti-robot"></i> 分析股票
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toastify.js for notifications -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+    <script src="third_party_resource/toastify.min.js"></script>
     
-    <!-- Flatpickr date picker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <!-- Flatpickr (Date picker) -->
+    <script src="third_party_resource/flatpickr.min.js"></script>
+    <script src="third_party_resource/zh.js"></script>
     
-    <!-- Preline UI JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
-    
-    <!-- Original scripts - keep these to preserve functionality -->
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
+    <!-- Custom JS -->
     <script src="js/utils.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/analysis.js"></script>
-    <script src="js/backtest.js"></script>
-    <script src="js/portfolio.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/app.js"></script>
-    
-    <!-- Analysis-specific initialization -->
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Analysis module
+        // 分析页面逻辑
+        const Analysis = {
+            selectedAnalysts: new Set(),
+            analysisInProgress: false,
+            
+            // 初始化
+            init: function() {
+                // 初始化日期选择器
+                this.initDatePickers();
+                
+                // 加载分析师列表
+                this.loadAnalysts();
+                
+                // 加载AI模型列表
+                this.loadModels();
+                
+                // 初始化标签页切换
+                this.initTabSwitching();
+            },
+            
+            // 初始化日期选择器
+            initDatePickers: function() {
+                const defaultStartDate = new Date();
+                defaultStartDate.setMonth(defaultStartDate.getMonth() - 1);
+                
+                flatpickr("#analysisStartDate", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: defaultStartDate,
+                    locale: "zh"
+                });
+                
+                flatpickr("#analysisEndDate", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: new Date(),
+                    locale: "zh"
+                });
+            },
+            
+            // 加载分析师列表
+            loadAnalysts: function() {
+                // 模拟API调用
+                setTimeout(() => {
+                    const analysts = [
+                        { id: 'fundamental', name: '基本面分析师', icon: 'chart-bar' },
+                        { id: 'technical', name: '技术分析师', icon: 'chart-line' },
+                        { id: 'sentiment', name: '情绪分析师', icon: 'mood-happy' },
+                        { id: 'macro', name: '宏观经济分析师', icon: 'world' }
+                    ];
+                    
+                    const container = document.getElementById('analystSelector');
+                    container.innerHTML = '';
+                    
+                    analysts.forEach(analyst => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'glass-chip py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-800 analyst-btn';
+                        btn.dataset.analystId = analyst.id;
+                        btn.innerHTML = `<i class="ti ti-${analyst.icon}"></i> ${analyst.name}`;
+                        
+                        btn.addEventListener('click', () => this.toggleAnalyst(btn, analyst.id));
+                        container.appendChild(btn);
+                    });
+                    
+                    // 默认选择基本面分析师
+                    this.toggleAnalyst(document.querySelector('[data-analyst-id="fundamental"]'), 'fundamental');
+                }, 500);
+            },
+            
+            // 切换分析师选择
+            toggleAnalyst: function(btn, analystId) {
+                if (this.selectedAnalysts.has(analystId)) {
+                    this.selectedAnalysts.delete(analystId);
+                    btn.classList.remove('bg-primary-100', 'text-primary-800', 'border-primary-300', 'dark:bg-primary-800/20', 'dark:text-primary-400', 'dark:border-primary-800/30');
+                    btn.classList.add('bg-white', 'text-gray-800', 'border-gray-200', 'dark:bg-secondary-900', 'dark:text-white', 'dark:border-secondary-700');
+                } else {
+                    this.selectedAnalysts.add(analystId);
+                    btn.classList.remove('bg-white', 'text-gray-800', 'border-gray-200', 'dark:bg-secondary-900', 'dark:text-white', 'dark:border-secondary-700');
+                    btn.classList.add('bg-primary-100', 'text-primary-800', 'border-primary-300', 'dark:bg-primary-800/20', 'dark:text-primary-400', 'dark:border-primary-800/30');
+                }
+            },
+            
+            // 加载AI模型列表
+            loadModels: function() {
+                // 模拟API调用
+                setTimeout(() => {
+                    const models = [
+                        { id: 'quick', name: '快速分析 (基础模型)' },
+                        { id: 'standard', name: '标准分析 (推荐)' },
+                        { id: 'advanced', name: '高级分析 (更全面)' }
+                    ];
+                    
+                    const select = document.getElementById('modelSelect');
+                    select.innerHTML = '';
+                    
+                    models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.id;
+                        option.textContent = model.name;
+                        select.appendChild(option);
+                    });
+                    
+                    // 默认选择标准模型
+                    select.value = 'standard';
+                }, 700);
+            },
+            
+            // 验证股票代码输入
+            validateTickersInput: function(input) {
+                const value = input.value.trim();
+                const feedbackEl = input.parentElement.querySelector('.validation-feedback');
+                
+                if (value === '') {
+                    feedbackEl.textContent = '请输入至少一个股票代码';
+                    feedbackEl.classList.add('text-red-500');
+                    return false;
+                }
+                
+                // 验证股票代码格式 (简单验证)
+                const tickers = value.split(',').map(t => t.trim());
+                const invalidTickers = tickers.filter(t => t === '');
+                
+                if (invalidTickers.length > 0) {
+                    feedbackEl.textContent = '请检查股票代码格式';
+                    feedbackEl.classList.add('text-red-500');
+                    return false;
+                }
+                
+                feedbackEl.textContent = `${tickers.length} 个股票代码`;
+                feedbackEl.classList.remove('text-red-500');
+                feedbackEl.classList.add('text-green-500');
+                return true;
+            },
+            
+            // 运行分析
+            runAnalysis: function() {
+                if (this.analysisInProgress) return;
+                
+                const tickersInput = document.getElementById('analysisTickers');
+                if (!this.validateTickersInput(tickersInput)) return;
+                
+                const tickers = tickersInput.value.split(',').map(t => t.trim());
+                const startDate = document.getElementById('analysisStartDate').value;
+                const endDate = document.getElementById('analysisEndDate').value;
+                const model = document.getElementById('modelSelect').value;
+                
+                if (this.selectedAnalysts.size === 0) {
+                    Utils.showToast('请选择至少一个分析师', 'error');
+                    return;
+                }
+                
+                this.analysisInProgress = true;
+                document.getElementById('runAnalysisBtn').classList.add('hidden');
+                document.getElementById('cancelAnalysisBtn').classList.remove('hidden');
+                
+                const statusEl = document.getElementById('analysisStatus');
+                const outputEl = document.getElementById('analysisOutput');
+                
+                statusEl.classList.remove('hidden');
+                outputEl.classList.add('hidden');
+                
+                statusEl.innerHTML = `
+                    <div class="flex items-center justify-center flex-col p-8">
+                        <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
+                            <span class="sr-only">加载中...</span>
+                        </div>
+                        <p class="mt-4 text-secondary-700 dark:text-secondary-300">正在分析 ${tickers.join(', ')}...</p>
+                    </div>
+                `;
+                
+                // 模拟API分析调用
+                setTimeout(() => {
+                    this.displayAnalysisResults(tickers);
+                }, 3000);
+            },
+            
+            // 取消分析
+            cancelAnalysis: function() {
+                if (!this.analysisInProgress) return;
+                
+                this.analysisInProgress = false;
+                document.getElementById('runAnalysisBtn').classList.remove('hidden');
+                document.getElementById('cancelAnalysisBtn').classList.add('hidden');
+                
+                const statusEl = document.getElementById('analysisStatus');
+                statusEl.innerHTML = `
+                    <div class="text-center p-8">
+                        <i class="ti ti-robot text-4xl text-gray-400 dark:text-secondary-600 mb-3"></i>
+                        <p class="text-gray-500 dark:text-secondary-400">分析已取消。</p>
+                    </div>
+                `;
+                
+                Utils.showToast('分析已取消', 'info');
+            },
+            
+            // 显示分析结果
+            displayAnalysisResults: function(tickers) {
+                this.analysisInProgress = false;
+                document.getElementById('runAnalysisBtn').classList.remove('hidden');
+                document.getElementById('cancelAnalysisBtn').classList.add('hidden');
+                
+                const statusEl = document.getElementById('analysisStatus');
+                const outputEl = document.getElementById('analysisOutput');
+                
+                statusEl.classList.add('hidden');
+                outputEl.classList.remove('hidden');
+                
+                // 构建结果
+                const results = tickers.map(ticker => {
+                    // 随机生成分析结果
+                    const sentiment = ['强烈看涨', '看涨', '中性', '看跌', '强烈看跌'][Math.floor(Math.random() * 5)];
+                    const targetPrice = (Math.random() * 200 + 50).toFixed(2);
+                    const confidence = (Math.random() * 30 + 70).toFixed(1);
+                    const riskLevel = ['低', '中低', '中等', '中高', '高'][Math.floor(Math.random() * 5)];
+                    
+                    return `
+                        <div class="glass-card p-4 rounded-lg mb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-secondary-900 dark:text-white">${ticker}</h3>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-${sentiment === '强烈看涨' || sentiment === '看涨' ? 'green' : sentiment === '强烈看跌' || sentiment === '看跌' ? 'red' : 'yellow'}-500 font-medium">${sentiment}</span>
+                                        <span class="mx-2 text-secondary-500">|</span>
+                                        <span class="text-secondary-600 dark:text-secondary-400">目标价: ¥${targetPrice}</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-secondary-600 dark:text-secondary-400">置信度</div>
+                                    <div class="text-lg font-bold text-secondary-900 dark:text-white">${confidence}%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <div class="mb-2 flex justify-between items-center">
+                                    <span class="text-sm text-secondary-600 dark:text-secondary-400">风险等级</span>
+                                    <span class="text-sm font-medium">${riskLevel}</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-gray-200 dark:bg-secondary-700">
+                                    <div class="h-2 rounded-full ${
+                                        riskLevel === '低' ? 'bg-green-500' : 
+                                        riskLevel === '中低' ? 'bg-green-400' :
+                                        riskLevel === '中等' ? 'bg-yellow-500' :
+                                        riskLevel === '中高' ? 'bg-orange-500' : 'bg-red-500'
+                                    }" style="width: ${
+                                        riskLevel === '低' ? '20%' : 
+                                        riskLevel === '中低' ? '40%' :
+                                        riskLevel === '中等' ? '60%' :
+                                        riskLevel === '中高' ? '80%' : '100%'
+                                    }"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h4 class="font-medium text-secondary-900 dark:text-white mb-2">分析摘要</h4>
+                                <p class="text-secondary-600 dark:text-secondary-400 text-sm">
+                                    基于我们的多智能体分析系统，${ticker} 的当前市场表现${
+                                        sentiment === '强烈看涨' ? '非常强劲，预计将有显著增长。基本面和技术指标均显示积极信号。' : 
+                                        sentiment === '看涨' ? '良好，预计会有稳健增长。多数指标显示积极信号。' :
+                                        sentiment === '中性' ? '稳定，预计将在当前价格区间波动。指标显示混合信号。' :
+                                        sentiment === '看跌' ? '疲软，可能面临一定程度下跌。多数指标显示消极信号。' : '非常疲软，面临显著下跌风险。基本面和技术指标均显示消极信号。'
+                                    }
+                                </p>
+                            </div>
+                            
+                            <div class="mt-4 flex justify-end">
+                                <button class="glass-btn py-2 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                    <i class="ti ti-file-download"></i> 导出报告
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                outputEl.innerHTML = results;
+                Utils.showToast('分析完成', 'success');
+            },
+            
+            // 初始化标签页切换
+            initTabSwitching: function() {
+                document.querySelectorAll('.ticker-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // 更新按钮状态
+                        document.querySelectorAll('.ticker-tab-btn').forEach(b => {
+                            b.classList.remove('active', 'border-primary-500', 'text-primary-600');
+                            b.classList.add('border-transparent', 'text-secondary-500');
+                            b.setAttribute('aria-selected', 'false');
+                        });
+                        
+                        btn.classList.add('active', 'border-primary-500', 'text-primary-600');
+                        btn.classList.remove('border-transparent', 'text-secondary-500');
+                        btn.setAttribute('aria-selected', 'true');
+                        
+                        // 更新内容区域
+                        const tabId = btn.id.replace('-btn', '');
+                        document.querySelectorAll('.ticker-tab-content').forEach(tab => {
+                            tab.classList.add('hidden');
+                            tab.classList.remove('active');
+                        });
+                        
+                        document.getElementById(tabId).classList.remove('hidden');
+                        document.getElementById(tabId).classList.add('active');
+                    });
+                });
+            }
+        };
+        
+        // 搜索股票
+        function performSearch(query) {
+            if (!query || query.trim() === '') return;
+            
+            // 打开模态框
+            const ticker = query.trim().toUpperCase();
+            document.getElementById('modalTickerSymbol').textContent = ticker;
+            
+            // 模拟API调用获取股票数据
+            setTimeout(() => {
+                const overviewTab = document.getElementById('overview-tab');
+                overviewTab.innerHTML = `
+                    <div class="glass-card p-4 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-bold text-secondary-900 dark:text-white">${ticker}</h3>
+                                <div class="text-2xl font-bold mt-1 text-${Math.random() > 0.5 ? 'green' : 'red'}-500">
+                                    ¥${(Math.random() * 500 + 50).toFixed(2)}
+                                    <span class="text-sm font-normal">${Math.random() > 0.5 ? '+' : '-'}${(Math.random() * 5).toFixed(2)}%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="gradient-btn-sm py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700">
+                                    <i class="ti ti-plus"></i> 自选
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <div class="text-sm text-secondary-600 dark:text-secondary-400">市值</div>
+                                <div class="font-medium">¥${(Math.random() * 1000 + 100).toFixed(2)}亿</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-secondary-600 dark:text-secondary-400">市盈率 (TTM)</div>
+                                <div class="font-medium">${(Math.random() * 50 + 5).toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-secondary-600 dark:text-secondary-400">52周高</div>
+                                <div class="font-medium">¥${(Math.random() * 600 + 100).toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-secondary-600 dark:text-secondary-400">52周低</div>
+                                <div class="font-medium">¥${(Math.random() * 100 + 50).toFixed(2)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="font-medium text-secondary-900 dark:text-white mb-2">公司简介</h4>
+                            <p class="text-secondary-600 dark:text-secondary-400 text-sm">
+                                这是${ticker}公司的简介信息。包含公司主营业务、行业分类、发展历程等关键信息。
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                const analysisTab = document.getElementById('analysis-tab');
+                analysisTab.innerHTML = `
+                    <p class="text-center text-secondary-600 dark:text-secondary-400">
+                        点击下方"分析股票"按钮开始对${ticker}进行AI分析
+                    </p>
+                `;
+                
+                // 设置模态框按钮功能
+                document.getElementById('addToWatchlistBtn').onclick = () => {
+                    // 添加到自选股逻辑
+                    Utils.showToast(`${ticker}已添加到自选列表`, 'success');
+                };
+                
+                document.getElementById('analyzeTickerBtn').onclick = () => {
+                    // 分析股票逻辑
+                    document.getElementById('analysisTickers').value = ticker;
+                    HSOverlay.close(document.getElementById('tickerModal'));
+                    Analysis.validateTickersInput(document.getElementById('analysisTickers'));
+                    Utils.showToast(`已设置分析${ticker}`, 'info');
+                };
+            }, 800);
+            
+            HSOverlay.open(document.getElementById('tickerModal'));
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
             Analysis.init();
         });
     </script>
