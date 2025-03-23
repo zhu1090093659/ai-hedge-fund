@@ -27,132 +27,123 @@ const Analysis = {
      */
     loadAnalysts: function() {
         const container = document.getElementById('analystSelector');
-        if (!container) return;
-        
-        // Show loading state
-        container.innerHTML = '<div class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-secondary-900 dark:border-secondary-700 dark:text-white skeleton-pulse">加载分析师中...</div>';
-        
-        // Get user settings for default analysts
-        const settings = Utils.getSettings();
-        const defaultAnalysts = settings.defaultAnalysts || CONFIG.DEFAULTS.ANALYSTS;
-        
-        // Fetch analysts from API
-        API.getAnalysts()
-            .then(analysts => {
-                if (!analysts || !analysts.length) {
-                    container.innerHTML = '<p class="text-red-500 dark:text-red-400">没有可用的分析师。请检查API连接。</p>';
-                    return;
-                }
+    if (!container) return;
+    
+    // 显示加载状态
+    container.innerHTML = '<div class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-secondary-900 dark:border-secondary-700 dark:text-white skeleton-pulse">加载分析师中...</div>';
+    
+    // 获取用户设置中的默认分析师
+    const settings = Utils.getSettings();
+    const defaultAnalysts = settings.defaultAnalysts || CONFIG.DEFAULTS.ANALYSTS;
+    
+    // 从API获取分析师
+    API.getAnalysts()
+        .then(analysts => {
+            if (!analysts || !analysts.length) {
+                container.innerHTML = '<p class="text-red-500 dark:text-red-400">没有可用的分析师。请检查API连接。</p>';
+                return;
+            }
+            
+            // 清除现有内容
+            container.innerHTML = '';
+            
+            // 按类型分组分析师
+            const analystGroups = {
+                '投资大师': analysts.filter(a => !a.id.includes('analyst')),
+                '专业分析师': analysts.filter(a => a.id.includes('analyst'))
+            };
+            
+            // 创建带分组的分析师选择器
+            for (const [groupName, groupAnalysts] of Object.entries(analystGroups)) {
+                if (groupAnalysts.length === 0) continue;
                 
-                // Clear existing content
-                container.innerHTML = '';
+                // 添加分组标题
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'w-full text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 mt-2';
+                groupHeader.textContent = groupName;
+                container.appendChild(groupHeader);
                 
-                // Group analysts by type
-                const analystGroups = {
-                    '投资大师': analysts.filter(a => !a.id.includes('analyst')),
-                    '专业分析师': analysts.filter(a => a.id.includes('analyst'))
-                };
+                // 为该分组创建包装器
+                const groupContainer = document.createElement('div');
+                groupContainer.className = 'flex flex-wrap gap-2 mb-2';
+                container.appendChild(groupContainer);
                 
-                // Create analyst selector with grouping
-                for (const [groupName, groupAnalysts] of Object.entries(analystGroups)) {
-                    if (groupAnalysts.length === 0) continue;
+                // 添加分析师复选框
+                groupAnalysts.forEach(analyst => {
+                    const isSelected = defaultAnalysts.includes(analyst.id);
                     
-                    // Add group header
-                    const groupHeader = document.createElement('div');
-                    groupHeader.className = 'w-full text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 mt-2';
-                    groupHeader.textContent = groupName;
-                    container.appendChild(groupHeader);
+                    const checkbox = document.createElement('div');
+                    checkbox.className = `glass-chip py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border ${isSelected ? 'selected' : ''} analyst-checkbox`;
+                    checkbox.dataset.analystId = analyst.id;
+                    checkbox.dataset.group = groupName;
                     
-                    // Create wrapper for analysts in this group
-                    const groupContainer = document.createElement('div');
-                    groupContainer.className = 'flex flex-wrap gap-2 mb-2';
-                    container.appendChild(groupContainer);
+                    // 添加带描述的工具提示
+                    checkbox.setAttribute('title', this.getAnalystDescription(analyst.id));
                     
-                    // Add analyst checkboxes
-                    groupAnalysts.forEach(analyst => {
-                        const isSelected = defaultAnalysts.includes(analyst.id);
-                        
-                        const checkbox = document.createElement('div');
-                        checkbox.className = `py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border ${isSelected ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 bg-white text-gray-800 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white'} cursor-pointer hover:shadow-sm transition-all duration-200 analyst-checkbox ${isSelected ? 'selected' : ''}`;
-                        checkbox.dataset.analystId = analyst.id;
-                        checkbox.dataset.group = groupName;
-                        
-                        // Add tooltip with description
-                        checkbox.setAttribute('title', this.getAnalystDescription(analyst.id));
-                        
-                        // Add icon if available
-                        const iconName = this.getAnalystIcon(analyst.id);
-                        if (iconName) {
-                            checkbox.innerHTML = `<i class="ti ${iconName}"></i><span>${analyst.display_name}</span>`;
-                        } else {
-                            checkbox.textContent = analyst.display_name;
-                        }
-                        
-                        groupContainer.appendChild(checkbox);
-                        
-                        // Add event listener
-                        checkbox.addEventListener('click', () => {
-                            checkbox.classList.toggle('selected');
-                            checkbox.classList.toggle('bg-primary-600');
-                            checkbox.classList.toggle('text-white');
-                            checkbox.classList.toggle('border-primary-600');
-                            checkbox.classList.toggle('bg-white');
-                            checkbox.classList.toggle('text-gray-800');
-                            checkbox.classList.toggle('dark:bg-secondary-900');
-                            checkbox.classList.toggle('border-gray-200');
-                            checkbox.classList.toggle('dark:border-secondary-700');
-                            checkbox.classList.toggle('dark:text-white');
-                            this.updateSelectedAnalystsCount();
-                        });
+                    // 如果有图标则添加图标
+                    const iconName = this.getAnalystIcon(analyst.id);
+                    if (iconName) {
+                        checkbox.innerHTML = `<i class="ti ${iconName}"></i><span>${analyst.display_name}</span>`;
+                    } else {
+                        checkbox.textContent = analyst.display_name;
+                    }
+                    
+                    groupContainer.appendChild(checkbox);
+                    
+                    // 添加事件监听器
+                    checkbox.addEventListener('click', () => {
+                        checkbox.classList.toggle('selected');
+                        this.updateSelectedAnalystsCount();
                     });
-                }
-                
-                // Add select all / none controls
-                const controlsContainer = document.createElement('div');
-                controlsContainer.className = 'flex justify-between items-center w-full mt-3 text-xs';
-                controlsContainer.innerHTML = `
-                    <button type="button" id="selectAllAnalysts" class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-800">
-                        <i class="ti ti-check-all text-sm"></i> 全选
-                    </button>
-                    <span id="selectedAnalystsCount" class="text-gray-500 dark:text-gray-400 px-2"></span>
-                    <button type="button" id="selectNoneAnalysts" class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:bg-secondary-900 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-800">
-                        <i class="ti ti-square-x text-sm"></i> 清空
-                    </button>
-                `;
-                container.appendChild(controlsContainer);
-                
-                // Add event listeners for controls
-                document.getElementById('selectAllAnalysts').addEventListener('click', () => {
-                    this.selectAllAnalysts();
                 });
-                
-                document.getElementById('selectNoneAnalysts').addEventListener('click', () => {
-                    this.selectNoneAnalysts();
-                });
-                
-                // Update selected count
-                this.updateSelectedAnalystsCount();
-                
-                // Clone analysts to backtest section
-                this.cloneAnalystsToBacktest(analysts, defaultAnalysts);
-            })
-            .catch(error => {
-                console.error('Error loading analysts:', error);
-                container.innerHTML = `
-                    <div class="error-state text-center p-4">
-                        <i class="ti ti-alert-triangle text-2xl text-red-500 mb-2"></i>
-                        <p class="text-red-500 mb-3">加载分析师失败</p>
-                        <button id="retryLoadAnalysts" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                            <i class="ti ti-refresh"></i> 重试
-                        </button>
-                    </div>
-                `;
-                
-                // Add retry button listener
-                document.getElementById('retryLoadAnalysts')?.addEventListener('click', () => {
-                    this.loadAnalysts();
-                });
+            }
+            
+            // 添加全选/全不选控件
+            const controlsContainer = document.createElement('div');
+            controlsContainer.className = 'flex justify-between items-center w-full mt-3 text-xs';
+            controlsContainer.innerHTML = `
+                <button type="button" id="selectAllAnalysts" class="glass-btn py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-md">
+                    <i class="ti ti-check-all text-sm"></i> 全选
+                </button>
+                <span id="selectedAnalystsCount" class="text-gray-500 dark:text-gray-400 px-2"></span>
+                <button type="button" id="selectNoneAnalysts" class="glass-btn py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-md">
+                    <i class="ti ti-square-x text-sm"></i> 清空
+                </button>
+            `;
+            container.appendChild(controlsContainer);
+            
+            // 为控件添加事件监听器
+            document.getElementById('selectAllAnalysts').addEventListener('click', () => {
+                this.selectAllAnalysts();
             });
+            
+            document.getElementById('selectNoneAnalysts').addEventListener('click', () => {
+                this.selectNoneAnalysts();
+            });
+            
+            // 更新选中数量
+            this.updateSelectedAnalystsCount();
+            
+            // 克隆分析师到回测部分
+            this.cloneAnalystsToBacktest(analysts, defaultAnalysts);
+        })
+        .catch(error => {
+            console.error('加载分析师时出错:', error);
+            container.innerHTML = `
+                <div class="error-state text-center p-4">
+                    <i class="ti ti-alert-triangle text-2xl text-red-500 mb-2"></i>
+                    <p class="text-red-500 mb-3">加载分析师失败</p>
+                    <button id="retryLoadAnalysts" class="gradient-btn py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg">
+                        <i class="ti ti-refresh"></i> 重试
+                    </button>
+                </div>
+            `;
+            
+            // 添加重试按钮监听器
+            document.getElementById('retryLoadAnalysts')?.addEventListener('click', () => {
+                this.loadAnalysts();
+            });
+        });
     },
     
     /**
@@ -173,16 +164,9 @@ const Analysis = {
      */
     selectAllAnalysts: function() {
         document.querySelectorAll('#analystSelector .analyst-checkbox').forEach(checkbox => {
-            checkbox.classList.add('selected');
-            checkbox.classList.add('bg-primary-600');
-            checkbox.classList.add('text-white');
-            checkbox.classList.add('border-primary-600');
-            checkbox.classList.remove('bg-white');
-            checkbox.classList.remove('text-gray-800');
-            checkbox.classList.remove('dark:bg-secondary-900');
-            checkbox.classList.remove('border-gray-200');
-            checkbox.classList.remove('dark:border-secondary-700');
-            checkbox.classList.remove('dark:text-white');
+            if (!checkbox.classList.contains('selected')) {
+                checkbox.classList.add('selected');
+            }
         });
         this.updateSelectedAnalystsCount();
     },
@@ -193,15 +177,6 @@ const Analysis = {
     selectNoneAnalysts: function() {
         document.querySelectorAll('#analystSelector .analyst-checkbox').forEach(checkbox => {
             checkbox.classList.remove('selected');
-            checkbox.classList.remove('bg-primary-600');
-            checkbox.classList.remove('text-white');
-            checkbox.classList.remove('border-primary-600');
-            checkbox.classList.add('bg-white');
-            checkbox.classList.add('text-gray-800');
-            checkbox.classList.add('dark:bg-secondary-900');
-            checkbox.classList.add('border-gray-200');
-            checkbox.classList.add('dark:border-secondary-700');
-            checkbox.classList.add('dark:text-white');
         });
         this.updateSelectedAnalystsCount();
     },
@@ -693,152 +668,152 @@ const Analysis = {
      * Run analysis with improved validation and feedback
      */
     runAnalysis: function() {
-        // Get form inputs
-        const tickersInput = document.getElementById('analysisTickers');
-        const startDateInput = document.getElementById('analysisStartDate');
-        const endDateInput = document.getElementById('analysisEndDate');
-        const modelSelect = document.getElementById('modelSelect');
-        const analystCheckboxes = document.querySelectorAll('#analystSelector .analyst-checkbox.selected');
-        
-        // Validate tickers
-        if (!tickersInput.value.trim()) {
-            Utils.showToast('请至少输入一个股票代码', 'error');
-            tickersInput.focus();
-            return;
-        }
-        
-        // Parse tickers
-        const tickers = this.parseTickers(tickersInput.value);
-        if (tickers.length === 0) {
-            Utils.showToast('无效的股票代码格式', 'error');
-            tickersInput.focus();
-            return;
-        }
-        
-        // Validate ticker formats
-        const invalidTickers = tickers.filter(ticker => !API.validateTickerFormat(ticker));
-        if (invalidTickers.length > 0) {
-            Utils.showToast(`无效的股票代码格式：${invalidTickers.join(', ')}`, 'error');
-            tickersInput.focus();
-            return;
-        }
-        
-        // Validate max number of tickers (limit to 5 for performance)
-        if (tickers.length > 5) {
-            Utils.showToast('请最多输入5个股票代码以获得最佳性能', 'warning');
-            tickersInput.focus();
-            return;
-        }
-        
-        // Get selected analysts
-        const selectedAnalysts = Array.from(analystCheckboxes).map(checkbox => checkbox.dataset.analystId);
-        if (selectedAnalysts.length === 0) {
-            Utils.showToast('请至少选择一个分析师', 'error');
-            return;
-        }
-        
-        // Get selected model
-        if (!modelSelect.value) {
-            Utils.showToast('请选择一个AI模型', 'error');
-            modelSelect.focus();
-            return;
-        }
-        
-        const modelName = modelSelect.value;
-        const modelProvider = modelSelect.options[modelSelect.selectedIndex].dataset.provider;
-        
-        // Get dates
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        
-        // Check date range
-        if (!startDate || !endDate) {
-            Utils.showToast('请选择开始和结束日期', 'error');
-            return;
-        }
-        
-        if (new Date(startDate) > new Date(endDate)) {
-            Utils.showToast('开始日期必须在结束日期之前', 'error');
-            return;
-        }
-        
-        // Show loading state
-        this.showAnalysisLoading();
-        
-        // Toggle buttons
-        const runAnalysisBtn = document.getElementById('runAnalysisBtn');
-        const cancelAnalysisBtn = document.getElementById('cancelAnalysisBtn');
-        
-        if (runAnalysisBtn) runAnalysisBtn.disabled = true;
-        if (cancelAnalysisBtn) {
-            cancelAnalysisBtn.classList.remove('hidden');
-            cancelAnalysisBtn.disabled = false;
-        }
-        
-        // Send analysis request
-        API.runAnalysis(tickers, startDate, endDate, selectedAnalysts, modelName, modelProvider)
-            .then(response => {
-                if (response && response.task_id) {
-                    this.activeTaskId = response.task_id;
-                    Utils.showToast(`分析开始：${tickers.join(', ')}`, 'info');
-                    
-                    // Poll for task updates
-                    this.pollControl = API.pollTask(
-                        response.task_id,
-                        // Progress callback
-                        (progress) => {
-                            this.updateAnalysisProgress(progress);
-                        },
-                        // Complete callback
-                        (result) => {
-                            this.showAnalysisResults(result);
-                            
-                            // Store analysis data
-                            this.activeAnalysis = {
-                                id: `analysis_${Date.now()}`,
-                                date: new Date().toISOString(),
-                                tickers: tickers,
-                                startDate: startDate,
-                                endDate: endDate,
-                                selectedAnalysts: selectedAnalysts,
-                                modelName: modelName,
-                                modelProvider: modelProvider,
-                                result: result
-                            };
-                            
-                            // Save to recent analyses
-                            Utils.saveRecentAnalysis(this.activeAnalysis);
-                            
-                            // Reset UI state
-                            if (runAnalysisBtn) runAnalysisBtn.disabled = false;
-                            if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
-                        },
-                        // Error callback
-                        (error) => {
-                            this.showAnalysisError(error || '分析失败');
-                            this.activeTaskId = null;
-                            
-                            // Reset UI state
-                            if (runAnalysisBtn) runAnalysisBtn.disabled = false;
-                            if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
-                        }
-                    );
-                } else {
-                    this.showAnalysisError('无效的服务器响应');
-                    
-                    // Reset UI state
-                    if (runAnalysisBtn) runAnalysisBtn.disabled = false;
-                    if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
-                }
-            })
-            .catch(error => {
-                console.error('Error starting analysis:', error);
-                this.showAnalysisError(`分析启动失败：${error.message}`);
+        // 获取表单输入
+    const tickersInput = document.getElementById('analysisTickers');
+    const startDateInput = document.getElementById('analysisStartDate');
+    const endDateInput = document.getElementById('analysisEndDate');
+    const modelSelect = document.getElementById('modelSelect');
+    const analystCheckboxes = document.querySelectorAll('#analystSelector .analyst-checkbox.selected');
+    
+    // 验证股票代码
+    if (!tickersInput.value.trim()) {
+        Utils.showToast('请至少输入一个股票代码', 'error');
+        tickersInput.focus();
+        return;
+    }
+    
+    // 解析股票代码
+    const tickers = this.parseTickers(tickersInput.value);
+    if (tickers.length === 0) {
+        Utils.showToast('无效的股票代码格式', 'error');
+        tickersInput.focus();
+        return;
+    }
+    
+    // 验证股票代码格式
+    const invalidTickers = tickers.filter(ticker => !API.validateTickerFormat(ticker));
+    if (invalidTickers.length > 0) {
+        Utils.showToast(`无效的股票代码格式：${invalidTickers.join(', ')}`, 'error');
+        tickersInput.focus();
+        return;
+    }
+    
+    // 验证最大股票代码数量
+    if (tickers.length > 5) {
+        Utils.showToast('请最多输入5个股票代码以获得最佳性能', 'warning');
+        tickersInput.focus();
+        return;
+    }
+    
+    // 获取选中的分析师
+    const selectedAnalysts = Array.from(analystCheckboxes).map(checkbox => checkbox.dataset.analystId);
+    if (selectedAnalysts.length === 0) {
+        Utils.showToast('请至少选择一个分析师', 'error');
+        return;
+    }
+    
+    // 获取选中的模型
+    if (!modelSelect.value) {
+        Utils.showToast('请选择一个AI模型', 'error');
+        modelSelect.focus();
+        return;
+    }
+    
+    const modelName = modelSelect.value;
+    const modelProvider = modelSelect.options[modelSelect.selectedIndex].dataset.provider;
+    
+    // 获取日期
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    
+    // 检查日期范围
+    if (!startDate || !endDate) {
+        Utils.showToast('请选择开始和结束日期', 'error');
+        return;
+    }
+    
+    if (new Date(startDate) > new Date(endDate)) {
+        Utils.showToast('开始日期必须在结束日期之前', 'error');
+        return;
+    }
+    
+    // 显示加载状态
+    this.showAnalysisLoading();
+    
+    // 切换按钮
+    const runAnalysisBtn = document.getElementById('runAnalysisBtn');
+    const cancelAnalysisBtn = document.getElementById('cancelAnalysisBtn');
+    
+    if (runAnalysisBtn) runAnalysisBtn.disabled = true;
+    if (cancelAnalysisBtn) {
+        cancelAnalysisBtn.classList.remove('hidden');
+        cancelAnalysisBtn.disabled = false;
+    }
+    
+    // 发送分析请求
+    API.runAnalysis(tickers, startDate, endDate, selectedAnalysts, modelName, modelProvider)
+        .then(response => {
+            if (response && response.task_id) {
+                this.activeTaskId = response.task_id;
+                Utils.showToast(`分析开始：${tickers.join(', ')}`, 'info');
                 
-                // Reset UI state
+                // 轮询任务更新
+                this.pollControl = API.pollTask(
+                    response.task_id,
+                    // 进度回调
+                    (progress) => {
+                        this.updateAnalysisProgress(progress);
+                    },
+                    // 完成回调
+                    (result) => {
+                        this.showAnalysisResults(result);
+                        
+                        // 存储分析数据
+                        this.activeAnalysis = {
+                            id: `analysis_${Date.now()}`,
+                            date: new Date().toISOString(),
+                            tickers: tickers,
+                            startDate: startDate,
+                            endDate: endDate,
+                            selectedAnalysts: selectedAnalysts,
+                            modelName: modelName,
+                            modelProvider: modelProvider,
+                            result: result
+                        };
+                        
+                        // 保存到最近分析
+                        Utils.saveRecentAnalysis(this.activeAnalysis);
+                        
+                        // 重置UI状态
+                        if (runAnalysisBtn) runAnalysisBtn.disabled = false;
+                        if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
+                    },
+                    // 错误回调
+                    (error) => {
+                        this.showAnalysisError(error || '分析失败');
+                        this.activeTaskId = null;
+                        
+                        // 重置UI状态
+                        if (runAnalysisBtn) runAnalysisBtn.disabled = false;
+                        if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
+                    }
+                );
+            } else {
+                this.showAnalysisError('无效的服务器响应');
+                
+                // 重置UI状态
                 if (runAnalysisBtn) runAnalysisBtn.disabled = false;
                 if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
-            });
+            }
+        })
+        .catch(error => {
+            console.error('启动分析时出错:', error);
+            this.showAnalysisError(`分析启动失败：${error.message}`);
+            
+            // 重置UI状态
+            if (runAnalysisBtn) runAnalysisBtn.disabled = false;
+            if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
+        });
     },
     
     /**
@@ -850,39 +825,101 @@ const Analysis = {
             this.pollControl = null;
         }
         
-        // Reset UI
+        // 重置 UI
         const statusElement = document.getElementById('analysisStatus');
         if (statusElement) {
             statusElement.innerHTML = `
-                <div class="error-state text-center">
-                    <i class="ti ti-player-stop text-3xl text-yellow-500 mb-2"></i>
-                    <p class="text-yellow-500 mb-4">分析被用户取消</p>
-                    <button id="startNewAnalysis" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700">
+                <div class="text-center p-8">
+                    <i class="ti ti-robot text-3xl text-yellow-500 mb-2"></i>
+                    <p class="text-yellow-500 mb-4">分析已被用户取消</p>
+                    <button id="startNewAnalysis" class="gradient-btn py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg">
                         <i class="ti ti-player-play"></i> 开始新分析
                     </button>
                 </div>
             `;
             
-            // Add event listener
+            // 添加事件监听器
             document.getElementById('startNewAnalysis')?.addEventListener('click', () => {
-                statusElement.innerHTML = '';
-                statusElement.style.display = 'none';
+                statusElement.innerHTML = `
+                    <div class="text-center p-8">
+                        <i class="ti ti-robot text-4xl text-gray-400 dark:text-secondary-600 mb-3"></i>
+                        <p class="text-gray-500 dark:text-secondary-400">没有正在运行的分析。使用表单启动一个。</p>
+                    </div>
+                `;
             });
         }
         
-        // Reset button state
+        // 重置按钮状态
         const runAnalysisBtn = document.getElementById('runAnalysisBtn');
         const cancelAnalysisBtn = document.getElementById('cancelAnalysisBtn');
         
         if (runAnalysisBtn) runAnalysisBtn.disabled = false;
         if (cancelAnalysisBtn) cancelAnalysisBtn.classList.add('hidden');
         
-        // Show toast
-        Utils.showToast('分析取消', 'info');
+        // 显示提示
+        Utils.showToast('分析已取消', 'info');
         
-        // Reset task ID
+        // 重置任务ID
         this.activeTaskId = null;
     },
+
+    /**
+     * Show analysis loading state
+     */
+    showAnalysisLoading: function() {
+        const statusElement = document.getElementById('analysisStatus');
+        const outputElement = document.getElementById('analysisOutput');
+        
+        if (statusElement) {
+            statusElement.innerHTML = `
+                <div class="flex items-center justify-center flex-col p-8">
+                    <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-primary-600 rounded-full" role="status" aria-label="loading">
+                        <span class="sr-only">加载中...</span>
+                    </div>
+                    <p class="mt-4 text-secondary-700 dark:text-secondary-300">分析正在进行中，请稍候...</p>
+                    <div class="progress-container mt-4 bg-gray-200 dark:bg-secondary-700 rounded-full h-2.5 w-full max-w-md mx-auto">
+                        <div class="progress-bar bg-primary-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            `;
+            statusElement.classList.remove('hidden');
+        }
+        
+        if (outputElement) outputElement.classList.add('hidden');
+    },
     
-    // [Rest of the methods remain similar but with improved implementations...]
+    updateAnalysisProgress: function(progress) {
+        const progressBar = document.querySelector('#analysisStatus .progress-bar');
+        if (progressBar) {
+            progressBar.style.width = `${progress * 100}%`;
+        }
+    },
+    
+    /**
+     * 显示分析错误
+     */
+    showAnalysisError: function(error) {
+        const statusElement = document.getElementById('analysisStatus');
+        
+        if (statusElement) {
+            statusElement.innerHTML = `
+                <div class="error-state text-center p-8">
+                    <i class="ti ti-alert-triangle text-3xl text-red-500 mb-2"></i>
+                    <p class="text-red-500 mb-4">${error}</p>
+                    <button id="retryAnalysisBtn" class="gradient-btn py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg">
+                        <i class="ti ti-refresh"></i> 重试
+                    </button>
+                </div>
+            `;
+            
+            // 添加重试按钮事件监听器
+            document.getElementById('retryAnalysisBtn')?.addEventListener('click', () => {
+                this.runAnalysis();
+            });
+        }
+    },
+    
+    
 };
+
+

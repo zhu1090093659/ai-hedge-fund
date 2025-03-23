@@ -316,3 +316,146 @@ body,
     -webkit-backdrop-filter: blur(20px);
   }
 }
+
+/* 确保导航链接在活动状态下样式一致 */
+.sidebar-nav-link.gradient-btn,
+.mobile-nav-link.gradient-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.sidebar-nav-link.gradient-btn:hover,
+.mobile-nav-link.gradient-btn:hover {
+    background: var(--accent-gradient-hover);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.5);
+}
+
+/* 统一分析师选择器样式 */
+.analyst-checkbox {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--btn-border-radius);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+}
+
+.analyst-checkbox.selected {
+    background: var(--accent-gradient);
+    color: white;
+    border-color: transparent;
+}
+
+.dark .analyst-checkbox {
+    background: var(--glass-bg-dark);
+    border-color: var(--glass-border-dark);
+}
+
+.dark .analyst-checkbox.selected {
+    background: var(--accent-gradient);
+    border-color: transparent;
+}
+
+/* 确保玻璃态输入框在所有页面一致 */
+.glass-input {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--btn-border-radius);
+    padding: 0.75rem 1rem;
+    color: inherit;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all var(--transition-medium);
+}
+
+.glass-input:focus {
+    outline: none;
+    border-color: rgba(79, 70, 229, 0.5);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dark .glass-input {
+    background: var(--glass-bg-dark);
+    border-color: var(--glass-border-dark);
+}
+
+.dark .glass-input:focus {
+    border-color: rgba(79, 70, 229, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* 统一小按钮样式 */
+.glass-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--btn-border-radius);
+    padding: 0.5rem 1rem;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.glass-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.dark .glass-btn {
+    background: var(--glass-bg-dark);
+    border-color: var(--glass-border-dark);
+    color: white;
+}
+
+.dark .glass-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* 统一选择器控件样式 */
+.glass-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    transition: all var(--transition-fast);
+}
+
+.glass-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.dark .glass-chip {
+    background: var(--glass-bg-dark);
+    border-color: var(--glass-border-dark);
+}
+
+/* 确保加载动画一致 */
+.skeleton-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    background: linear-gradient(90deg, 
+        rgba(156, 163, 175, 0.1) 0%, 
+        rgba(156, 163, 175, 0.2) 50%, 
+        rgba(156, 163, 175, 0.1) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

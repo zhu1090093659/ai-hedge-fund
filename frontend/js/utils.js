@@ -432,6 +432,39 @@ const Utils = {
                 iconClass = 'ti-info-circle';
         }
         
+        // 翻译常用的英文消息到中文
+        const translations = {
+            'Analysis started': '分析已开始',
+            'Analysis completed': '分析已完成',
+            'Analysis cancelled': '分析已取消',
+            'Error': '错误',
+            'Success': '成功',
+            'Warning': '警告',
+            'Info': '信息',
+            'Settings saved': '设置已保存',
+            'Connection test successful': '连接测试成功',
+            'Connection test failed': '连接测试失败',
+            'Invalid API endpoint': '无效的API端点',
+            'Invalid ticker format': '无效的股票代码格式',
+            'Please enter at least one ticker': '请至少输入一个股票代码',
+            'Please select at least one analyst': '请至少选择一个分析师',
+            'Please select a model': '请选择一个模型',
+            'Please select a date range': '请选择日期范围',
+            'Start date must be before end date': '开始日期必须在结束日期之前',
+            'No data available': '没有可用数据',
+            'Added to watchlist': '已添加到自选',
+            'Removed from watchlist': '已从自选删除',
+            'Already in watchlist': '已在自选中',
+            'Not in watchlist': '不在自选中'
+        };
+        
+        // 尝试翻译常用的英文消息
+        for (const [english, chinese] of Object.entries(translations)) {
+            if (message.includes(english)) {
+                message = message.replace(english, chinese);
+            }
+        }
+        
         Toastify({
             text: `<i class="${iconClass} mr-2"></i> ${message}`,
             escapeMarkup: false,
@@ -442,49 +475,6 @@ const Utils = {
                 background: bgColors[type] || bgColors.info
             }
         }).showToast();
-    },
-    
-    /**
-     * Get color scheme based on settings
-     * @returns {Object} Color scheme
-     */
-    getColorScheme: function() {
-        const settings = this.getSettings();
-        return CONFIG.CHART_COLORS[settings.chartColorScheme] || CONFIG.CHART_COLORS.DEFAULT;
-    },
-    
-    /**
-     * Validate ticker format (US or A-share)
-     * @param {string} ticker - Ticker to validate
-     * @returns {boolean} Is ticker valid
-     */
-    isValidTicker: function(ticker) {
-        if (!ticker) return false;
-        
-        // US stock format (1-5 alphabetic characters)
-        if (/^[A-Za-z]{1,5}$/.test(ticker)) {
-            return true;
-        }
-        
-        // A-share format (6 digits followed by .SH or .SZ)
-        if (/^\d{6}\.(SH|SZ)$/.test(ticker)) {
-            return true;
-        }
-        
-        return false;
-    },
-    
-    /**
-     * Parse ticker string with multiple tickers
-     * @param {string} tickerString - Comma-separated ticker string
-     * @returns {Array} Array of valid tickers
-     */
-    parseTickers: function(tickerString) {
-        if (!tickerString) return [];
-        
-        return tickerString.split(',')
-            .map(ticker => ticker.trim().toUpperCase())
-            .filter(ticker => ticker.length > 0);
     },
     
     /**
@@ -500,6 +490,68 @@ const Utils = {
             startDate: this.formatDate(startDate),
             endDate: this.formatDate(endDate)
         };
+    },
+    
+    /**
+     * Get text for a specific key
+     * @param {string} key - Text key
+     * @param {Object} params - Replacement parameters
+     * @returns {string} Localized text
+     */
+    getText: function(key, params = {}) {
+        // Text mapping
+        const textMap = {
+            // Common UI text
+            'loading': '加载中...',
+            'error': '错误',
+            'success': '成功',
+            'warning': '警告',
+            'info': '信息',
+            'save': '保存',
+            'cancel': '取消',
+            'close': '关闭',
+            'add': '添加',
+            'remove': '删除',
+            'edit': '编辑',
+            'search': '搜索',
+            'filter': '筛选',
+            'refresh': '刷新',
+            'retry': '重试',
+            'reset': '重置',
+            
+            // Specific feature text
+            'run_analysis': '运行分析',
+            'cancel_analysis': '取消分析',
+            'analysis_in_progress': '分析正在进行中...',
+            'analysis_cancelled': '分析已取消',
+            'analysis_completed': '分析已完成',
+            'analysis_failed': '分析失败',
+            'no_analysis_running': '没有正在运行的分析。使用表单启动一个。',
+            
+            // Error messages
+            'error_invalid_ticker': '无效的股票代码格式',
+            'error_empty_ticker': '请至少输入一个股票代码',
+            'error_no_analysts': '请至少选择一个分析师',
+            'error_no_model': '请选择一个AI模型',
+            'error_date_range': '开始日期必须在结束日期之前',
+            'error_api_connection': 'API连接失败，请检查设置',
+            
+            // Text with parameters
+            'ticker_added': '${ticker} 已添加到自选列表',
+            'ticker_removed': '${ticker} 已从自选列表删除',
+            'analysis_started': '分析开始：${tickers}',
+            'max_tickers_warning': '请最多输入${count}个股票代码以获得最佳性能'
+        };
+        
+        // Get text
+        let text = textMap[key] || key;
+        
+        // Replace parameters
+        for (const [param, value] of Object.entries(params)) {
+            text = text.replace(`\${${param}}`, value);
+        }
+        
+        return text;
     },
     
     /**
