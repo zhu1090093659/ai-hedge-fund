@@ -5,26 +5,26 @@ from langchain_core.messages import HumanMessage
 from langgraph.graph import END, StateGraph
 from colorama import Fore, Back, Style, init
 import questionary
-from agents.ben_graham import ben_graham_agent
-from agents.bill_ackman import bill_ackman_agent
-from agents.fundamentals import fundamentals_agent
-from agents.portfolio_manager import portfolio_management_agent
-from agents.technicals import technical_analyst_agent
-from agents.risk_manager import risk_management_agent
-from agents.sentiment import sentiment_agent
-from agents.warren_buffett import warren_buffett_agent
-from graph.state import AgentState
-from agents.valuation import valuation_agent
-from utils.display import print_trading_output
-from utils.analysts import ANALYST_ORDER, get_analyst_nodes
-from utils.progress import progress
-from llm.models import LLM_ORDER, get_model_info
+from src.agents.ben_graham import ben_graham_agent
+from src.agents.bill_ackman import bill_ackman_agent
+from src.agents.fundamentals import fundamentals_agent
+from src.agents.portfolio_manager import portfolio_management_agent
+from src.agents.technicals import technical_analyst_agent
+from src.agents.risk_manager import risk_management_agent
+from src.agents.sentiment import sentiment_agent
+from src.agents.warren_buffett import warren_buffett_agent
+from src.graph.state import AgentState
+from src.agents.valuation import valuation_agent
+from src.utils.display import print_trading_output
+from src.utils.analysts import ANALYST_ORDER, get_analyst_nodes
+from src.utils.progress import progress
+from src.llm.models import LLM_ORDER, get_model_info
 
 import argparse
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from tabulate import tabulate
-from utils.visualize import save_graph_as_png
+from src.utils.visualize import save_graph_as_png
 import json
 
 # Load environment variables from .env file
@@ -47,7 +47,24 @@ def parse_hedge_fund_response(response):
         print(f"Unexpected error while parsing response: {e}\nResponse: {repr(response)}")
         return None
 
-
+def validate_ticker(ticker: str) -> bool:
+    """
+    Validate ticker format for both US and A-shares.
+    
+    Args:
+        ticker: Stock symbol to validate
+        
+    Returns:
+        bool: True if valid ticker format, False otherwise
+    """
+    # Validate A-share ticker (e.g., 600519.SH, 000858.SZ)
+    if "." in ticker:
+        code, exchange = ticker.split(".")
+        return (exchange in ["SH", "SZ"] and
+                code.isdigit() and len(code) == 6)
+    
+    # Validate US ticker (default validation logic)
+    return ticker.isalpha() and len(ticker) <= 5
 
 ##### Run the Hedge Fund #####
 def run_hedge_fund(
@@ -168,6 +185,15 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if args.tickers:
+        tickers = [ticker.strip() for ticker in args.tickers.split(",")]
+        invalid_tickers = [ticker for ticker in tickers if not validate_ticker(ticker)]
+        if invalid_tickers:
+            print(f"\n{Fore.RED}Invalid ticker format: {', '.join(invalid_tickers)}{Style.RESET_ALL}")
+            print(f"\n{Fore.YELLOW}Valid formats:{Style.RESET_ALL}")
+            print(f"  - US tickers: 1-5 alphabet characters (e.g., AAPL, MSFT)")
+            print(f"  - A-shares: 6 digits followed by .SH or .SZ (e.g., 600519.SH, 000858.SZ)")
+            sys.exit(1)
     # Parse tickers from comma-separated string
     tickers = [ticker.strip() for ticker in args.tickers.split(",")]
 

@@ -2,8 +2,8 @@ import os
 import pandas as pd
 import requests
 
-from data.cache import get_cache
-from data.models import (
+from src.data.cache import get_cache
+from src.data.models import (
     CompanyNews,
     CompanyNewsResponse,
     FinancialMetrics,
@@ -16,12 +16,28 @@ from data.models import (
     InsiderTradeResponse,
 )
 
+# Import akshare wrapper
+from src.tools.akshare_api import (
+    is_ashare_ticker,
+    get_prices as get_ashare_prices,
+    get_financial_metrics as get_ashare_financial_metrics,
+    search_line_items as search_ashare_line_items,
+    get_insider_trades as get_ashare_insider_trades,
+    get_company_news as get_ashare_company_news,
+    get_market_cap as get_ashare_market_cap,
+)
+
 # Global cache instance
 _cache = get_cache()
 
 
 def get_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
-    """Fetch price data from cache or API."""
+    """Fetch price data from cache or API, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return get_ashare_prices(ticker, start_date, end_date)
+    
+    # Original US stock implementation
     # Check cache first
     if cached_data := _cache.get_prices(ticker):
         # Filter cached data by date range and convert to Price objects
@@ -57,7 +73,12 @@ def get_financial_metrics(
     period: str = "ttm",
     limit: int = 10,
 ) -> list[FinancialMetrics]:
-    """Fetch financial metrics from cache or API."""
+    """Fetch financial metrics from cache or API, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return get_ashare_financial_metrics(ticker, end_date, period, limit)
+    
+    # Original US stock implementation
     # Check cache first
     if cached_data := _cache.get_financial_metrics(ticker):
         # Filter cached data by date and limit
@@ -96,7 +117,12 @@ def search_line_items(
     period: str = "ttm",
     limit: int = 10,
 ) -> list[LineItem]:
-    """Fetch line items from API."""
+    """Fetch line items, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return search_ashare_line_items(ticker, line_items, end_date, period, limit)
+    
+    # Original US stock implementation
     # If not in cache or insufficient data, fetch from API
     headers = {}
     if api_key := os.environ.get("FINANCIAL_DATASETS_API_KEY"):
@@ -130,7 +156,12 @@ def get_insider_trades(
     start_date: str | None = None,
     limit: int = 1000,
 ) -> list[InsiderTrade]:
-    """Fetch insider trades from cache or API."""
+    """Fetch insider trades, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return get_ashare_insider_trades(ticker, end_date, start_date, limit)
+    
+    # Original US stock implementation
     # Check cache first
     if cached_data := _cache.get_insider_trades(ticker):
         # Filter cached data by date range
@@ -193,7 +224,12 @@ def get_company_news(
     start_date: str | None = None,
     limit: int = 1000,
 ) -> list[CompanyNews]:
-    """Fetch company news from cache or API."""
+    """Fetch company news, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return get_ashare_company_news(ticker, end_date, start_date, limit)
+    
+    # Original US stock implementation
     # Check cache first
     if cached_data := _cache.get_company_news(ticker):
         # Filter cached data by date range
@@ -250,13 +286,20 @@ def get_company_news(
     return all_news
 
 
-
 def get_market_cap(
     ticker: str,
     end_date: str,
 ) -> float | None:
-    """Fetch market cap from the API."""
+    """Fetch market cap, supporting both US stocks and A-shares."""
+    # Determine if this is an A-share ticker
+    if is_ashare_ticker(ticker):
+        return get_ashare_market_cap(ticker, end_date)
+    
+    # Original US stock implementation
     financial_metrics = get_financial_metrics(ticker, end_date)
+    if not financial_metrics:
+        return None
+        
     market_cap = financial_metrics[0].market_cap
     if not market_cap:
         return None
