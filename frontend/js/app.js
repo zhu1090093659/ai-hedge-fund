@@ -1,40 +1,199 @@
 /**
  * Main application for AI Hedge Fund
  */
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize components
-    initApp();
-});
-
-/**
- * Initialize the application with improved navigation handling
- */
-function initApp() {
-    console.log('Initializing AI Hedge Fund Dashboard...');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('正在初始化页面...');
     
-    // Initialize charts configuration
-    if (typeof Charts !== 'undefined') {
-        Charts.init();
+    // 初始化导航
+    initNavigation();
+    
+    // 确保正确显示导航
+    fixNavigationDisplay();
+    
+    // 应用当前页面的高亮效果
+    refreshActiveNavLinks();
+    
+    // 用中文替换页面中的英文文本
+    localizePageText();
+    
+    // 根据当前页面初始化特定功能
+    initCurrentPage();
+});
+/**
+ * 初始化导航链接
+ */
+function initNavigation() {
+    const sidebarLinks = document.querySelectorAll('.sidebar-nav-link');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+    
+    // 将移动菜单按钮的事件处理程序附加到移动导航
+    const mobileMenuButton = document.querySelector('[data-hs-overlay="#mobile-menu"]');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            console.log('移动菜单按钮点击');
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        });
     }
     
-    // Check API connectivity
-    checkApiConnection();
+    // 为关闭按钮添加事件处理程序
+    const closeButton = document.querySelector('#mobile-menu [data-hs-overlay="#mobile-menu"]');
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            mobileMenu.classList.add('hidden');
+        });
+    }
+}
+
+/**
+ * 根据当前页面初始化特定功能
+ */
+function initCurrentPage() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    console.log('初始化当前页面:', currentPage);
     
-    // Apply saved theme or default
-    const savedTheme = localStorage.getItem(CONFIG.STORAGE.THEME) || CONFIG.DEFAULTS.THEME;
-    Utils.applyTheme(savedTheme);
+    if (currentPage === 'index.html' || currentPage === '') {
+        // 初始化仪表板
+        if (typeof Dashboard !== 'undefined') {
+            Dashboard.init();
+        }
+    } else if (currentPage === 'analysis.html') {
+        // 初始化分析页面
+        if (typeof Analysis !== 'undefined') {
+            Analysis.init();
+        }
+    } else if (currentPage === 'backtest.html') {
+        // 初始化回测页面
+        if (typeof Backtest !== 'undefined') {
+            Backtest.init();
+        }
+    } else if (currentPage === 'portfolio.html') {
+        // 初始化投资组合页面
+        if (typeof Portfolio !== 'undefined') {
+            Portfolio.init();
+        }
+        
+        // 为"运行分析"按钮添加事件监听器
+        document.getElementById('emptyPortfolioAnalyze')?.addEventListener('click', function() {
+            window.location.href = 'analysis.html';
+        });
+    } else if (currentPage === 'settings.html') {
+        // 初始化设置页面
+        if (typeof Settings !== 'undefined') {
+            Settings.init();
+        }
+    }
+}
+
+/**
+ * 用中文替换页面中的英文文本
+ */
+function localizePageText() {
+    // 定义英文到中文的映射
+    const translations = {
+        // 导航和标签页
+        'Dashboard': '控制面板',
+        'AI Analysis': 'AI分析',
+        'Backtesting': '回测',
+        'Portfolio': '投资组合',
+        'Settings': '设置',
+        'Overview': '概览',
+        'Chart': '图表',
+        'Financials': '财务',
+        'News': '新闻',
+        'Analysis': '分析',
+        
+        // 按钮和操作
+        'Search': '搜索',
+        'Close': '关闭',
+        'Save': '保存',
+        'Cancel': '取消',
+        'Add': '添加',
+        'Remove': '删除',
+        'Edit': '编辑',
+        'Run': '运行',
+        'Test': '测试',
+        'Reset': '重置',
+        'Export': '导出',
+        'Import': '导入',
+        'Apply': '应用',
+        
+        // 其他常见 UI 文本
+        'Loading...': '加载中...',
+        'No data available': '没有可用数据',
+        'Add to Watchlist': '添加到自选',
+        'Analyze Stock': '分析股票',
+        'Toggle navigation': '切换导航',
+        'Your portfolio is empty': '您的投资组合为空',
+        'Run Analysis': '运行分析',
+        
+        // 时间文本
+        '1M': '1月',
+        '3M': '3月',
+        '6M': '6月',
+        '1Y': '1年',
+        '5Y': '5年'
+    };
     
-    // Initialize components
-    initNavigation();
-    initSearch();
-    initThemeToggle();
-    initModals();
+    // 找到所有文本节点并替换它们
+    const textNodes = [];
+    const walk = document.createTreeWalker(
+        document.body, 
+        NodeFilter.SHOW_TEXT, 
+        null, 
+        false
+    );
     
-    // Initialize module for the current page
-    initializeCurrentPageModule();
+    let node;
+    while(node = walk.nextNode()) {
+        if (node.nodeValue.trim()) {
+            textNodes.push(node);
+        }
+    }
     
-    // Fix navigation display - IMPORTANT!
-    fixNavigationDisplay();
+    // 替换文本
+    for(let i = 0; i < textNodes.length; i++) {
+        const node = textNodes[i];
+        let text = node.nodeValue;
+        
+        // 检查并替换翻译字典中的所有项目
+        for(const [english, chinese] of Object.entries(translations)) {
+            // 使用正则表达式确保我们替换的是完整的单词
+            const regex = new RegExp(`\\b${english}\\b`, 'g');
+            text = text.replace(regex, chinese);
+        }
+        
+        node.nodeValue = text;
+    }
+    
+    // 此外，更新元素的属性（如按钮、标签等）
+    // 更新占位符文本
+    const inputs = document.querySelectorAll('input[placeholder]');
+    inputs.forEach(input => {
+        const placeholder = input.getAttribute('placeholder');
+        if (placeholder && placeholder.includes('e.g.')) {
+            input.setAttribute('placeholder', placeholder.replace('e.g.', '如:'));
+        }
+        if (placeholder && placeholder.includes('AAPL, MSFT')) {
+            input.setAttribute('placeholder', placeholder.replace('AAPL, MSFT', 'AAPL, 600519.SH'));
+        }
+    });
+    
+    // 更新按钮和链接的标题属性
+    const elementsWithTitle = document.querySelectorAll('[title]');
+    elementsWithTitle.forEach(element => {
+        const title = element.getAttribute('title');
+        for(const [english, chinese] of Object.entries(translations)) {
+            if (title && title.includes(english)) {
+                element.setAttribute('title', title.replace(english, chinese));
+            }
+        }
+    });
 }
 
 /**
@@ -106,8 +265,8 @@ function fixNavigationDisplay() {
 }
 
 /**
- * 刷新导航链接的活动状态
- * 确保当前页面的导航链接正确高亮显示
+ * 修复导航高亮显示问题
+ * 此函数确保当前页面的导航链接正确高亮显示
  */
 function refreshActiveNavLinks() {
     const sidebarLinks = document.querySelectorAll('.sidebar-nav-link');
@@ -115,151 +274,118 @@ function refreshActiveNavLinks() {
     
     // 获取当前页面
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    console.log('Current page:', currentPage);
+    console.log('当前页面:', currentPage);
     
     // 合并所有链接
     const allLinks = [...sidebarLinks, ...mobileLinks];
     
     // 先重置所有链接样式
     allLinks.forEach(link => {
-        link.classList.remove('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
-        link.classList.add('text-secondary-700', 'dark:text-white', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-    });
-    
-    // 为当前页面链接设置活动样式
-    allLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === currentPage) {
-            console.log('Setting active link:', href);
-            link.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-            link.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
-        }
-    });
-}
-
-/**
- * Initialize module for the current page
- */
-function initializeCurrentPageModule() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    console.log('Current page:', currentPage);
-    
-    if (currentPage === 'index.html' || currentPage === '') {
-        if (typeof Dashboard !== 'undefined') Dashboard.init();
-    } else if (currentPage === 'analysis.html') {
-        if (typeof Analysis !== 'undefined') Analysis.init();
-    } else if (currentPage === 'backtest.html') {
-        if (typeof Backtest !== 'undefined') Backtest.init();
-    } else if (currentPage === 'portfolio.html') {
-        if (typeof Portfolio !== 'undefined') Portfolio.init();
-    } else if (currentPage === 'settings.html') {
-        if (typeof Settings !== 'undefined') Settings.init();
-    }
-    
-    // Always call fixNavigationDisplay after page-specific initialization
-    // This ensures the sidebar is displayed correctly regardless of the page
-    setTimeout(() => {
-        fixNavigationDisplay();
-        refreshActiveNavLinks();
-    }, 50);
-}
-
-/**
- * Initialize sidebar navigation
- */
-function initNavigation() {
-    const sidebarLinks = document.querySelectorAll('.sidebar-nav-link');
-    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-    
-    // Combine both sets of links
-    const allLinks = [...sidebarLinks, ...mobileLinks];
-    
-    // Set active link based on current page
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    allLinks.forEach(link => {
-        const href = link.getAttribute('href');
+        // 移除所有可能的活动状态类
+        link.classList.remove('gradient-btn', 'bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
         
-        // 重置所有链接样式，确保文本颜色可见
-        link.classList.remove('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+        // 添加默认样式
         if (!link.classList.contains('text-secondary-700')) {
             link.classList.add('text-secondary-700');
         }
         if (!link.classList.contains('dark:text-white')) {
             link.classList.add('dark:text-white');
         }
-        
-        // Check if this link matches the current page
-        if (href === currentPage) {
-            console.log('Active link found:', href);
-            link.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-            link.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+        if (!link.classList.contains('hover:bg-gray-100')) {
+            link.classList.add('hover:bg-gray-100');
         }
-        
-        link.addEventListener('click', (e) => {
-            // Get href attribute
-            const href = link.getAttribute('href');
-            
-            // If it's a section within the same page (has data-section attribute)
-            const sectionId = link.getAttribute('data-section');
-            if (sectionId) {
-                e.preventDefault();
-                
-                // Remove active class from all links
-                allLinks.forEach(navLink => {
-                    navLink.classList.remove('bg-primary-500', 'text-white');
-                    navLink.classList.add('text-secondary-700', 'dark:text-white', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-                });
-                
-                // Add active class to clicked link
-                allLinks.forEach(navLink => {
-                    if (navLink.getAttribute('data-section') === sectionId) {
-                        navLink.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-                        navLink.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
-                    }
-                });
-                
-                // Hide all sections
-                const sections = document.querySelectorAll('.content-section');
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                    section.classList.add('hidden');
-                });
-                
-                // Show target section
-                const targetSection = document.getElementById(sectionId);
-                if (targetSection) {
-                    targetSection.classList.remove('hidden');
-                    targetSection.classList.add('active');
-                }
-                
-                // Update URL hash
-                window.location.hash = sectionId;
-            }
-            // If it's a link to another page (has href attribute but no data-section)
-            else if (href && href !== '#') {
-                // Let the default navigation happen
-                // No need to call preventDefault()
-                
-                // Close mobile menu if open
-                const mobileMenu = document.getElementById('mobile-menu');
-                if (mobileMenu && mobileMenu.classList.contains('show')) {
-                    const hsOverlay = HSOverlay.getInstance(mobileMenu);
-                    if (hsOverlay) hsOverlay.hide();
-                }
-            }
-        });
+        if (!link.classList.contains('dark:hover:bg-secondary-700')) {
+            link.classList.add('dark:hover:bg-secondary-700');
+        }
     });
     
-    // Check URL hash on page load
-    if (window.location.hash) {
-        const sectionId = window.location.hash.substring(1);
-        const targetLink = document.querySelector(`[data-section="${sectionId}"]`);
-        if (targetLink) {
-            targetLink.click();
+    // 为当前页面链接设置活动样式
+    allLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
+            console.log('设置活动链接:', href);
+            
+            // 移除默认样式
+            link.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
+            
+            // 添加活动样式 - 使用gradient-btn类以保持一致性
+            link.classList.add('gradient-btn', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+            
+            // 确保文本可见性
+            const textSpan = link.querySelector('span');
+            if (textSpan) {
+                textSpan.style.display = 'inline';
+                textSpan.style.color = 'white';
+            }
         }
+    });
+}
+
+/**
+ * 修复导航显示问题
+ * 这是关键函数，确保侧边栏在大屏幕上可见
+ */
+function fixNavigationDisplay() {
+    // 获取所有侧边栏 - 查找隐藏和非隐藏变体以处理所有可能的状态
+    const sidebars = [
+        document.querySelector('aside.hidden.lg\\:flex'),
+        document.querySelector('aside.lg\\:flex')
+    ];
+    
+    // 处理所有找到的侧边栏
+    sidebars.forEach(sidebar => {
+        if (!sidebar) return;
+        
+        console.log('修复侧边栏显示');
+        
+        // 根据屏幕宽度强制设置正确的类
+        if (window.innerWidth >= 1024) { // lg断点通常为1024px
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('flex');
+            sidebar.classList.add('lg:flex'); // 确保大屏幕显示样式
+        } else {
+            sidebar.classList.add('hidden');
+            sidebar.classList.remove('flex');
+        }
+    });
+    
+    // 添加全局窗口大小调整监听器（使用单个监听器）
+    if (!window.sidebarResizeListenerAdded) {
+        window.addEventListener('resize', () => {
+            const sidebars = [
+                document.querySelector('aside.hidden.lg\\:flex'),
+                document.querySelector('aside.lg\\:flex')
+            ];
+            
+            sidebars.forEach(sidebar => {
+                if (!sidebar) return;
+                
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.remove('hidden');
+                    sidebar.classList.add('flex');
+                    sidebar.classList.add('lg:flex'); // 确保大屏幕显示样式
+                } else {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('flex');
+                }
+            });
+        });
+        
+        window.sidebarResizeListenerAdded = true;
     }
+    
+    // 确保移动菜单按钮正常工作
+    const mobileMenuButton = document.querySelector('[data-hs-overlay="#mobile-menu"]');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+    
+    // 页面加载时执行一次重新应用导航链接的样式
+    refreshActiveNavLinks();
 }
 
 // 添加页面可见性变化监听器，确保在页面切换时重新应用导航栏
@@ -288,12 +414,19 @@ window.addEventListener('popstate', () => {
     }, 100);
 });
 
-// Run initialization when DOM is ready
-document.addEventListener('DOMContentLoaded', initApp);
+// 在DOM准备就绪时运行初始化
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化应用
+    initApp();
+    
+    // 在所有页面上确保导航栏正常工作
+    fixNavigationDisplay();
+    refreshActiveNavLinks();
+});
 
-// Add a reload handler to fix navigation when navigating between pages
+// 添加页面显示处理程序以在页面间导航时修复导航
 window.addEventListener('pageshow', function(event) {
-    // Fix navigation even on back/forward navigation
+    // 即使在后退/前进导航时也修复导航
     setTimeout(() => {
         fixNavigationDisplay();
         refreshActiveNavLinks();
