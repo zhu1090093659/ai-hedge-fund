@@ -359,6 +359,14 @@ async def get_price_data(
     if not start_date or not end_date:
         start_date, end_date = get_default_dates()
     
+    # 验证日期不能超过当前日期
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    if end_date > current_date:
+        end_date = current_date
+        logger.warning(f"请求的结束日期超过当前日期，已自动调整为当前日期: {current_date}")
+    if start_date > current_date:
+        raise HTTPException(status_code=400, detail=f"开始日期不能超过当前日期: {start_date} > {current_date}")
+    
     try:
         prices = get_prices(ticker, start_date, end_date)
         prices_df = prices_to_df(prices)
@@ -461,6 +469,14 @@ async def analyze_stocks(
     else:
         start_date, end_date = request.start_date, request.end_date
     
+    # 验证日期不能超过当前日期
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    if end_date > current_date:
+        end_date = current_date
+        logger.warning(f"请求的结束日期超过当前日期，已自动调整为当前日期: {current_date}")
+    if start_date > current_date:
+        raise HTTPException(status_code=400, detail=f"开始日期不能超过当前日期: {start_date} > {current_date}")
+    
     # Generate a task ID
     task_id = f"analysis_{datetime.now().strftime('%Y%m%d%H%M%S')}_{'-'.join(request.tickers)}"
     
@@ -513,6 +529,14 @@ async def run_backtest(
         start_date, end_date = get_default_dates()
     else:
         start_date, end_date = request.start_date, request.end_date
+    
+    # 验证日期不能超过当前日期
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    if end_date > current_date:
+        end_date = current_date
+        logger.warning(f"请求的结束日期超过当前日期，已自动调整为当前日期: {current_date}")
+    if start_date > current_date:
+        raise HTTPException(status_code=400, detail=f"开始日期不能超过当前日期: {start_date} > {current_date}")
     
     # Generate a task ID
     task_id = f"backtest_{datetime.now().strftime('%Y%m%d%H%M%S')}_{'-'.join(request.tickers)}"
@@ -568,4 +592,4 @@ async def update_portfolio(portfolio: PortfolioState):
 # ---- Run the FastAPI app ----
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8091)
+    uvicorn.run(app, host="127.0.0.1", port=8092)

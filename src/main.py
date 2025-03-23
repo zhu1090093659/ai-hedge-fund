@@ -63,8 +63,15 @@ def validate_ticker(ticker: str) -> bool:
         return (exchange in ["SH", "SZ"] and
                 code.isdigit() and len(code) == 6)
     
+    # 处理指数代码（以^开头）
+    if ticker.startswith("^"):
+        # 指数代码通常是^后跟字母，如^GSPC, ^IXIC, ^RUT等
+        return len(ticker) > 1 and ticker[1:].isalnum()
+    
     # Validate US ticker (default validation logic)
-    return ticker.isalpha() and len(ticker) <= 5
+    # 允许字母、数字和一些特殊字符（如.和-），但长度限制放宽到10个字符
+    return all(c.isalnum() or c in ".-" for c in ticker) and len(ticker) <= 10
+
 
 ##### Run the Hedge Fund #####
 def run_hedge_fund(

@@ -7,7 +7,7 @@ const CONFIG = {
     
     // API configuration
     API: {
-        BASE_URL: 'http://127.0.0.1:8091',  // Default API endpoint (can be overridden in settings)
+        BASE_URL: 'http://127.0.0.1:8092',  // Default API endpoint (can be overridden in settings)
         ENDPOINTS: {
             TICKER_INFO: '/api/ticker-info',
             VALIDATE_TICKERS: '/api/validate-tickers',

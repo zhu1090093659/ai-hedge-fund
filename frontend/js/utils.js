@@ -261,9 +261,16 @@ const Utils = {
         this.saveWatchlist(watchlist);
         this.showToast(`${normalizedTicker} added to watchlist`, 'success');
         
-        // Refresh watchlist if on dashboard
-        if (document.getElementById('dashboard').classList.contains('active')) {
-            Dashboard.loadWatchlist();
+        // 刷新自选列表（如果在首页）
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentPage === 'index.html' || currentPage === '') {
+            // 尝试使用dashboard.js的函数，如果存在
+            if (typeof Dashboard !== 'undefined' && typeof Dashboard.loadWatchlist === 'function') {
+                Dashboard.loadWatchlist();
+            } else {
+                // 直接刷新自选列表表格
+                this.refreshWatchlistTable();
+            }
         }
     },
     
@@ -570,5 +577,103 @@ const Utils = {
      */
     getTickerCurrency: function(ticker) {
         return this.isAShare(ticker) ? 'CNY' : 'USD';
+    },
+    
+    /**
+     * 验证股票代码格式是否正确
+     * @param {string} ticker - 股票代码
+     * @returns {boolean} 是否为有效的股票代码
+     */
+    isValidTicker: function(ticker) {
+        if (!ticker || typeof ticker !== 'string') return false;
+        
+        // 美股格式 (例如: AAPL, MSFT)
+        const usPattern = /^[A-Z]{1,5}$/;
+        
+        // A股格式 (例如: 600519.SH, 000858.SZ)
+        const cnPattern = /^\d{6}\.(SH|SZ)$/;
+        
+        return usPattern.test(ticker) || cnPattern.test(ticker);
+    },
+    
+    /**
+     * 直接刷新自选列表表格
+     */
+    refreshWatchlistTable: function() {
+        const watchlistTable = document.getElementById('watchlistTable');
+        if (!watchlistTable) return;
+        
+        const watchlist = this.getWatchlist();
+        watchlistTable.innerHTML = '';
+        
+        if (watchlist.length === 0) {
+            watchlistTable.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-4 py-6 text-center">
+                        <div class="flex flex-col items-center">
+                            <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">您的自选股列表为空</p>
+                            <button id="emptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-plus"></i> 添加股票
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // 为新添加的按钮绑定事件
+            const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
+            if (emptyWatchlistAddBtn) {
+                emptyWatchlistAddBtn.onclick = function() {
+                    const ticker = prompt('请输入股票代码 (例如: AAPL, 600519.SH):');
+                    if (!ticker) return;
+                    
+                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
+                        Utils.addToWatchlist(ticker.trim().toUpperCase());
+                    } else {
+                        Utils.showToast('无效的股票代码格式', 'error');
+                    }
+                };
+            }
+            return;
+        }
+        
+        for (const ticker of watchlist) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ticker}</td>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+                <td>
+                    <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none analyze-btn" data-ticker="${ticker}">
+                        <i class="ti ti-robot"></i>
+                    </button>
+                    <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none remove-btn" data-ticker="${ticker}">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
+            watchlistTable.appendChild(row);
+        }
+        
+        // 为分析按钮和删除按钮绑定事件
+        document.querySelectorAll('.analyze-btn').forEach(btn => {
+            btn.onclick = function() {
+                const ticker = this.getAttribute('data-ticker');
+                if (ticker) {
+                    window.location.href = `analysis.html?ticker=${ticker}`;
+                }
+            };
+        });
+        
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.onclick = function() {
+                const ticker = this.getAttribute('data-ticker');
+                if (ticker) {
+                    Utils.removeFromWatchlist(ticker);
+                }
+            };
+        });
     }
 };

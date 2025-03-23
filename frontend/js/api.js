@@ -8,7 +8,9 @@ const API = {
      */
     getBaseUrl: function() {
         const storedEndpoint = localStorage.getItem(CONFIG.STORAGE.API_ENDPOINT);
-        return storedEndpoint || CONFIG.API.BASE_URL;
+        const baseUrl = storedEndpoint || CONFIG.API.BASE_URL;
+        console.log('使用API基础URL:', baseUrl);
+        return baseUrl;
     },
 
     /**
@@ -32,7 +34,47 @@ const API = {
         if (apiKey) {
             headers['Authorization'] = `Bearer ${apiKey}`;
         }
+        console.log('API请求头:', headers);
         return headers;
+    },
+    
+    /**
+     * 检测API连接状态
+     * @returns {Promise<boolean>} 连接是否成功
+     */
+    checkConnection: async function() {
+        try {
+            console.log('正在检测API连接...');
+            const url = `${this.getBaseUrl()}/`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                console.log(`API连接检测超时`);
+                controller.abort();
+            }, 5000); // 使用较短的超时时间
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: this.getHeaders(),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                console.log('API连接成功');
+                Utils.showToast('后端连接成功', 'success');
+                return true;
+            } else {
+                console.error('API连接失败:', response.status, response.statusText);
+                Utils.showToast(`后端连接失败: ${response.status} ${response.statusText}`, 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('API连接检测错误:', error.name, error.message);
+            Utils.showToast(`后端连接失败: ${error.message}`, 'error');
+            return false;
+        }
     },
 
     /**
@@ -51,8 +93,12 @@ const API = {
                 }
             });
 
+            console.log(`开始API GET请求: ${url.toString()}`);
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+            const timeoutId = setTimeout(() => {
+                console.log(`API请求超时: ${url.toString()}`);
+                controller.abort();
+            }, CONFIG.API.TIMEOUT);
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -63,23 +109,27 @@ const API = {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
+                console.error(`API响应错误 (${endpoint}):`, response.status, response.statusText);
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.detail || `API Error: ${response.status} ${response.statusText}`);
             }
 
-            return await response.json();
+            const data = await response.json();
+            console.log(`API GET请求成功 (${endpoint}):`, data);
+            return data;
         } catch (error) {
-            console.error(`API GET Error (${endpoint}):`, error);
+            console.error(`API GET错误 (${endpoint}):`, error.name, error.message);
             
             // Handle timeout errors specifically
             if (error.name === 'AbortError') {
-                Utils.showToast('Request timed out. Please try again.', 'error');
-                throw new Error('Request timed out');
+                Utils.showToast('请求超时，请重试', 'error');
+                throw new Error('请求超时');
             }
             
             // Retry logic for network errors
-            if (error.message.includes('NetworkError') && retryCount < CONFIG.API.MAX_RETRIES) {
-                Utils.showToast(`Network error. Retrying (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
+            if ((error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) && retryCount < CONFIG.API.MAX_RETRIES) {
+                console.log(`网络错误，正在重试 (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`);
+                Utils.showToast(`网络错误，正在重试 (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
                 return new Promise(resolve => {
                     setTimeout(() => {
                         resolve(this.get(endpoint, params, retryCount + 1));
@@ -102,8 +152,12 @@ const API = {
         try {
             const url = `${this.getBaseUrl()}${endpoint}`;
             
+            console.log(`开始API POST请求: ${url}`, data);
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+            const timeoutId = setTimeout(() => {
+                console.log(`API请求超时: ${url}`);
+                controller.abort();
+            }, CONFIG.API.TIMEOUT);
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -115,23 +169,27 @@ const API = {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
+                console.error(`API响应错误 (${endpoint}):`, response.status, response.statusText);
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.detail || `API Error: ${response.status} ${response.statusText}`);
             }
 
-            return await response.json();
+            const responseData = await response.json();
+            console.log(`API POST请求成功 (${endpoint}):`, responseData);
+            return responseData;
         } catch (error) {
-            console.error(`API POST Error (${endpoint}):`, error);
+            console.error(`API POST错误 (${endpoint}):`, error.name, error.message);
             
             // Handle timeout errors specifically
             if (error.name === 'AbortError') {
-                Utils.showToast('Request timed out. Please try again.', 'error');
-                throw new Error('Request timed out');
+                Utils.showToast('请求超时，请重试', 'error');
+                throw new Error('请求超时');
             }
             
             // Retry logic for network errors
-            if (error.message.includes('NetworkError') && retryCount < CONFIG.API.MAX_RETRIES) {
-                Utils.showToast(`Network error. Retrying (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
+            if ((error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) && retryCount < CONFIG.API.MAX_RETRIES) {
+                console.log(`网络错误，正在重试 (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`);
+                Utils.showToast(`网络错误，正在重试 (${retryCount + 1}/${CONFIG.API.MAX_RETRIES})...`, 'warning');
                 return new Promise(resolve => {
                     setTimeout(() => {
                         resolve(this.post(endpoint, data, retryCount + 1));

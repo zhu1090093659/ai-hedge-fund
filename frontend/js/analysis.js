@@ -15,11 +15,80 @@ const Analysis = {
      * Initialize analysis components
      */
     init: function() {
+        console.log('初始化分析页面');
         this.loadAnalysts();
         this.loadModels();
         this.initDatePickers();
         this.setupEventListeners();
         this.loadRecentAnalyses();
+        
+        // 从URL或localStorage获取股票代码并自动填充
+        this.autoFillTickerFromParams();
+    },
+    
+    /**
+     * 自动从URL参数或localStorage中获取股票代码，并填充到表单
+     */
+    autoFillTickerFromParams: function() {
+        console.log('检查URL参数和localStorage...');
+        
+        // 从URL获取股票代码
+        const urlParams = new URLSearchParams(window.location.search);
+        let ticker = urlParams.get('ticker');
+        
+        // 如果URL中没有，则尝试从localStorage获取
+        if (!ticker) {
+            ticker = localStorage.getItem('pending_analysis_ticker');
+            console.log('从localStorage获取股票代码:', ticker);
+            
+            // 使用后立即清除，防止重复使用
+            if (ticker) {
+                localStorage.removeItem('pending_analysis_ticker');
+            }
+        } else {
+            console.log('从URL参数获取股票代码:', ticker);
+        }
+        
+        // 如果找到股票代码，填充到表单并显示通知
+        if (ticker) {
+            const tickersInput = document.getElementById('analysisTickers');
+            if (tickersInput) {
+                tickersInput.value = ticker;
+                console.log('已自动填充股票代码:', ticker);
+                this.validateTickersInput(tickersInput);
+                
+                // 显示通知
+                Utils.showToast(`已加载${ticker}，准备分析`, 'info');
+                
+                // 自动选择默认分析师（如果未选择）
+                setTimeout(() => {
+                    const selectedAnalysts = document.querySelectorAll('#analystSelector .analyst-checkbox.selected');
+                    if (selectedAnalysts.length === 0) {
+                        this.selectDefaultAnalysts();
+                    }
+                }, 1000);
+            }
+        }
+    },
+    
+    /**
+     * 选择默认分析师
+     */
+    selectDefaultAnalysts: function() {
+        console.log('选择默认分析师');
+        // 获取用户设置中的默认分析师
+        const settings = Utils.getSettings();
+        const defaultAnalysts = settings.defaultAnalysts || CONFIG.DEFAULTS.ANALYSTS;
+        
+        // 选择默认分析师
+        document.querySelectorAll('#analystSelector .analyst-checkbox').forEach(checkbox => {
+            if (defaultAnalysts.includes(checkbox.dataset.analystId)) {
+                checkbox.classList.add('selected');
+            }
+        });
+        
+        // 更新选中计数
+        this.updateSelectedAnalystsCount();
     },
     
     /**
@@ -921,5 +990,3 @@ const Analysis = {
     
     
 };
-
-

@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 import requests
+from datetime import datetime, timedelta
+import numpy as np
+import akshare as ak
 
 from src.data.cache import get_cache
 from src.data.models import (
@@ -33,15 +36,33 @@ _cache = get_cache()
 
 def get_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
     """Fetch price data from cache or API, supporting both US stocks and A-shares."""
+    # 处理美股指数
+    if ticker.startswith("^"):
+        return get_us_index_prices(ticker, start_date, end_date)
+    
     # Determine if this is an A-share ticker
     if is_ashare_ticker(ticker):
         return get_ashare_prices(ticker, start_date, end_date)
     
     # Original US stock implementation
+    # 将字符串日期转换为datetime.date对象
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
     # Check cache first
     if cached_data := _cache.get_prices(ticker):
         # Filter cached data by date range and convert to Price objects
-        filtered_data = [Price(**price) for price in cached_data if start_date <= price["time"] <= end_date]
+        filtered_data = []
+        for price in cached_data:
+            # 将price["time"]转换为datetime.date对象进行比较
+            if isinstance(price["time"], str):
+                price_date = datetime.strptime(price["time"], "%Y-%m-%d").date()
+            else:
+                price_date = price["time"]
+                
+            if start_date_obj <= price_date <= end_date_obj:
+                filtered_data.append(Price(**price))
+                
         if filtered_data:
             return filtered_data
 
@@ -317,6 +338,98 @@ def prices_to_df(prices: list[Price]) -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df.sort_index(inplace=True)
     return df
+
+
+def get_us_index_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
+    """获取美股指数数据"""
+    # 指数代码映射
+    index_mapping = {
+        "^GSPC": ".INX",    # 标普500
+        "^IXIC": ".IXIC",   # 纳斯达克综合指数
+        "^DJI": ".DJI",     # 道琼斯工业平均指数
+        "^NDX": ".NDX",     # 纳斯达克100
+    }
+    
+    # 检查缓存
+    if cached_data := _cache.get_prices(ticker):
+        # 将字符串日期转换为datetime.date对象进行比较
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+        
+        # 过滤缓存数据
+        filtered_data = []
+        for price in cached_data:
+            if isinstance(price["time"], str):
+                price_date = datetime.strptime(price["time"], "%Y-%m-%d").date()
+            else:
+                price_date = price["time"]
+                
+            if start_date_obj <= price_date <= end_date_obj:
+                filtered_data.append(Price(**price))
+                
+        if filtered_data:
+            return filtered_data
+    
+    # 获取akshare使用的指数代码
+    ak_symbol = index_mapping.get(ticker)
+    if not ak_symbol:
+        raise Exception(f"不支持的美股指数: {ticker}")
+    
+    try:
+        # 获取指数数据
+        df = ak.index_us_stock_sina(symbol=ak_symbol)
+        
+        # 确保df有日期列并排序
+        if 'date' not in df.columns:
+            # 如果没有日期列，我们使用当前日期
+            df['date'] = datetime.now().strftime("%Y-%m-%d")
+        
+        # 按日期排序
+        df = df.sort_values(by='date')
+        
+        # 转换为Price对象列表
+        prices = []
+        for _, row in df.iterrows():
+            # 处理volume字段，确保能正确处理整数和字符串类型
+            volume_value = row["volume"]
+            if isinstance(volume_value, str):
+                volume = int(volume_value.replace(",", ""))
+            else:
+                volume = int(volume_value)
+            
+            # 创建Price对象
+            price_date = row['date']
+            if isinstance(price_date, str):
+                time_str = price_date
+            else:
+                time_str = price_date.strftime("%Y-%m-%d")
+                
+            prices.append(Price(
+                open=float(row["open"]),
+                close=float(row["close"]),
+                high=float(row["high"]),
+                low=float(row["low"]),
+                volume=volume,
+                time=time_str
+            ))
+        
+        # 过滤日期范围
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+        
+        filtered_prices = []
+        for price in prices:
+            price_date = datetime.strptime(price.time, "%Y-%m-%d").date()
+            if start_date_obj <= price_date <= end_date_obj:
+                filtered_prices.append(price)
+        
+        # 缓存数据
+        _cache.set_prices(ticker, [price.model_dump() for price in prices])
+        
+        return filtered_prices
+    except Exception as e:
+        print(f"获取美股指数数据失败: {ticker} - {str(e)}")
+        return []
 
 
 # Update the get_price_data function to use the new functions

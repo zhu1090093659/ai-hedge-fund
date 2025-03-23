@@ -407,52 +407,94 @@ const Dashboard = {
      * Load US market indices
      */
     loadUsMarketIndices: function() {
-        // Mock data for demonstration
-        const spIndex = {
-            value: 4983.35,
-            change: 0.56
-        };
+        const indices = [
+            { id: 'index-sp500', symbol: '^GSPC' },
+            { id: 'index-nasdaq', symbol: '^IXIC' },
+            { id: 'index-dji', symbol: '^DJI' }
+        ];
         
-        const nasdaqIndex = {
-            value: 17768.23,
-            change: 1.23
-        };
+        // 获取当前日期
+        const today = new Date();
+        const endDate = today.toISOString().split('T')[0];
         
-        const russellIndex = {
-            value: 2108.67,
-            change: -0.37
-        };
+        // 获取7天前的日期作为起始日期
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
+        const startDateStr = startDate.toISOString().split('T')[0];
         
-        // Update UI
-        this.updateIndexDisplay('index-sp500', spIndex);
-        this.updateIndexDisplay('index-nasdaq', nasdaqIndex);
-        this.updateIndexDisplay('index-russell', russellIndex);
+        // 为每个指数获取数据
+        indices.forEach(index => {
+            API.getPrices(index.symbol, startDateStr, endDate)
+                .then(data => {
+                    if (data && data.length >= 2) {
+                        // 获取最新和前一天的收盘价
+                        const latestData = data[data.length - 1];
+                        const previousData = data[data.length - 2];
+                        
+                        // 计算指数值和变化
+                        const value = latestData.close;
+                        const previousValue = previousData.close;
+                        const change = ((value - previousValue) / previousValue) * 100;
+                        
+                        // 更新UI
+                        this.updateIndexDisplay(index.id, {
+                            value: value,
+                            previousValue: previousValue,
+                            change: change
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error(`获取指数数据失败: ${index.symbol}`, error);
+                });
+        });
     },
     
     /**
      * Load China market indices
      */
     loadChinaMarketIndices: function() {
-        // Mock data for demonstration
-        const sseIndex = {
-            value: 3125.08,
-            change: 0.86
-        };
+        const indices = [
+            { id: 'index-sse', symbol: '000001.SH' },
+            { id: 'index-szse', symbol: '399001.SZ' },
+            { id: 'index-csi300', symbol: '000300.SH' }
+        ];
         
-        const szseIndex = {
-            value: 10123.42,
-            change: 1.05
-        };
+        // 获取当前日期
+        const today = new Date();
+        const endDate = today.toISOString().split('T')[0];
         
-        const csiIndex = {
-            value: 3872.26,
-            change: -0.12
-        };
+        // 获取7天前的日期作为起始日期
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
+        const startDateStr = startDate.toISOString().split('T')[0];
         
-        // Update UI
-        this.updateIndexDisplay('index-sse', sseIndex);
-        this.updateIndexDisplay('index-szse', szseIndex);
-        this.updateIndexDisplay('index-csi300', csiIndex);
+        // 为每个指数获取数据
+        indices.forEach(index => {
+            API.getPrices(index.symbol, startDateStr, endDate)
+                .then(data => {
+                    if (data && data.length >= 2) {
+                        // 获取最新和前一天的收盘价
+                        const latestData = data[data.length - 1];
+                        const previousData = data[data.length - 2];
+                        
+                        // 计算指数值和变化
+                        const value = latestData.close;
+                        const previousValue = previousData.close;
+                        const change = ((value - previousValue) / previousValue) * 100;
+                        
+                        // 更新UI
+                        this.updateIndexDisplay(index.id, {
+                            value: value,
+                            previousValue: previousValue,
+                            change: change
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error(`获取指数数据失败: ${index.symbol}`, error);
+                });
+        });
     },
     
     /**
@@ -467,10 +509,23 @@ const Dashboard = {
         const valueElement = element.querySelector('.index-value');
         const changeElement = element.querySelector('.index-change');
         
+        // 显示指数值，保留两位小数
         valueElement.textContent = data.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         
-        const changeText = Utils.formatPercentage(data.change / 100, 2, true);
+        // 计算指数点数变化
+        const pointChange = data.previousValue ? (data.value - data.previousValue) : 0;
+        
+        // 显示指数点数变化和百分比变化
+        const changeText = `${pointChange >= 0 ? '+' : ''}${pointChange.toFixed(2)} (${data.change >= 0 ? '+' : ''}${data.change.toFixed(2)}%)`;
         changeElement.textContent = changeText;
-        changeElement.classList.add(data.change >= 0 ? 'positive' : 'negative');
+        
+        // 设置颜色
+        if (data.change >= 0) {
+            changeElement.classList.remove('text-danger-500');
+            changeElement.classList.add('text-success-500');
+        } else {
+            changeElement.classList.remove('text-success-500');
+            changeElement.classList.add('text-danger-500');
+        }
     }
 };

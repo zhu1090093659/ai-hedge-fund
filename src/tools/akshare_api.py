@@ -28,12 +28,78 @@ def is_ashare_ticker(ticker: str) -> bool:
     code, exchange = ticker.split(".")
     return (exchange in ["SH", "SZ"] and code.isdigit() and len(code) == 6)
 
+def get_ashare_index_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
+    """获取A股指数价格数据"""
+    try:
+        # 指数代码映射
+        index_mapping = {
+            "000001.SH": "sh000001",
+            "399001.SZ": "sz399001",
+            "399006.SZ": "sz399006",
+            "000300.SH": "sh000300"
+        }
+        
+        ak_symbol = index_mapping.get(ticker)
+        if not ak_symbol:
+            raise Exception(f"不支持的A股指数: {ticker}")
+        
+        # 获取指数数据
+        df = ak.stock_zh_index_daily(symbol=ak_symbol)
+        
+        # 将字符串日期转换为datetime.date对象
+        start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+        
+        # 确保日期列是datetime类型
+        df['date'] = pd.to_datetime(df['date']).dt.date
+        
+        # 过滤日期范围
+        filtered_df = df[(df['date'] >= start_date_obj) & (df['date'] <= end_date_obj)]
+        
+        # 转换为Price对象列表
+        prices = []
+        for _, row in filtered_df.iterrows():
+            date_str = row['date'].strftime("%Y-%m-%d") if hasattr(row['date'], 'strftime') else str(row['date'])
+            prices.append(Price(
+                open=float(row['open']),
+                close=float(row['close']),
+                high=float(row['high']),
+                low=float(row['low']),
+                volume=int(row['volume']),
+                time=date_str
+            ))
+        
+        # 缓存数据
+        _cache.set_prices(ticker, [p.model_dump() for p in prices])
+        return prices
+    except Exception as e:
+        print(f"获取A股指数数据失败: {ticker} - {str(e)}")
+        return []
+
 def get_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
     """Fetch A-share price data using akshare"""
+    # 检查是否是指数
+    if ticker in ["000001.SH", "399001.SZ", "399006.SZ", "000300.SH"]:
+        return get_ashare_index_prices(ticker, start_date, end_date)
+        
+    # 将字符串日期转换为datetime.date对象
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
     # Check cache first
     if cached_data := _cache.get_prices(ticker):
         # Filter cached data by date range and convert to Price objects
-        filtered_data = [Price(**price) for price in cached_data if start_date <= price["time"] <= end_date]
+        filtered_data = []
+        for price in cached_data:
+            # 将price["time"]转换为datetime.date对象进行比较
+            if isinstance(price["time"], str):
+                price_date = datetime.strptime(price["time"], "%Y-%m-%d").date()
+            else:
+                price_date = price["time"]
+                
+            if start_date_obj <= price_date <= end_date_obj:
+                filtered_data.append(Price(**price))
+                
         if filtered_data:
             return filtered_data
             
@@ -79,10 +145,23 @@ def get_financial_metrics(
     limit: int = 10,
 ) -> list[FinancialMetrics]:
     """Fetch A-share financial metrics using akshare"""
+    # 将字符串日期转换为datetime.date对象
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
     # Check cache first
     if cached_data := _cache.get_financial_metrics(ticker):
         # Filter cached data by date and limit
-        filtered_data = [FinancialMetrics(**metric) for metric in cached_data if metric["report_period"] <= end_date]
+        filtered_data = []
+        for metric in cached_data:
+            # 将metric["report_period"]转换为datetime.date对象进行比较
+            if isinstance(metric["report_period"], str):
+                report_date = datetime.strptime(metric["report_period"], "%Y-%m-%d").date()
+            else:
+                report_date = metric["report_period"]
+                
+            if report_date <= end_date_obj:
+                filtered_data.append(FinancialMetrics(**metric))
+                
         filtered_data.sort(key=lambda x: x.report_period, reverse=True)
         if filtered_data:
             return filtered_data[:limit]

@@ -4,6 +4,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard interactions initialized');
     
+    // 检查Dashboard对象是否已初始化
+    if (typeof Dashboard !== 'undefined') {
+        console.log('Dashboard对象已加载，将使用Dashboard.js中的事件处理');
+        return; // 如果Dashboard对象已定义，则退出并使用其事件处理
+    }
+    
+    // 以下代码仅在Dashboard对象未定义时执行（作为备用）
+    console.log('Dashboard对象未加载，将使用backup事件处理');
+    
     // 1. 处理Add Stocks按钮
     const addToWatchlistBtn = document.getElementById('addToWatchlist');
     if (addToWatchlistBtn) {
@@ -15,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
                 Utils.addToWatchlist(ticker.trim().toUpperCase());
-                Dashboard.loadWatchlist(); // 重新加载watchlist
+                loadWatchlist(); // 重新加载watchlist
             } else {
                 Utils.showToast('无效的股票代码格式', 'error');
             }
@@ -33,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
                 Utils.addToWatchlist(ticker.trim().toUpperCase());
-                Dashboard.loadWatchlist(); // 重新加载watchlist
+                loadWatchlist(); // 重新加载watchlist
             } else {
                 Utils.showToast('无效的股票代码格式', 'error');
             }
@@ -101,6 +110,52 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('index-sse').style.display = '';
             document.getElementById('index-szse').style.display = '';
             document.getElementById('index-csi300').style.display = '';
+        }
+    }
+    
+    // 为了确保可以显示市场数据，添加一个简单的加载watchlist功能
+    function loadWatchlist() {
+        // 简单实现，实际功能通过Dashboard.js处理
+        const watchlistTable = document.getElementById('watchlistTable');
+        if (!watchlistTable) return;
+        
+        const watchlist = Utils.getWatchlist();
+        watchlistTable.innerHTML = '';
+        
+        if (watchlist.length === 0) {
+            watchlistTable.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-4 py-6 text-center">
+                        <div class="flex flex-col items-center">
+                            <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">您的自选股列表为空</p>
+                            <button id="dynamicEmptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-plus"></i> 添加股票
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        for (const ticker of watchlist) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ticker}</td>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+                <td>
+                    <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none analyze-btn" data-ticker="${ticker}">
+                        <i class="ti ti-robot"></i>
+                    </button>
+                    <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none remove-btn" data-ticker="${ticker}">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </td>
+            `;
+            watchlistTable.appendChild(row);
         }
     }
 });
