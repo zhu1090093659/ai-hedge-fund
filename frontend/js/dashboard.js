@@ -6,19 +6,53 @@ const Dashboard = {
      * Initialize dashboard components
      */
     init: function() {
+        const self = this; // 保存this引用，避免在事件处理程序中丢失上下文
+        
         this.loadPortfolioSummary();
         this.loadWatchlist();
         this.loadRecentAnalyses();
         this.loadMarketIndices();
         
-        // Set up event listeners
-        document.getElementById('addToWatchlist').addEventListener('click', this.showAddToWatchlistPrompt);
+        // 为顶部的Add按钮添加事件监听器
+        const addToWatchlistBtn = document.getElementById('addToWatchlist');
+        if (addToWatchlistBtn) {
+            addToWatchlistBtn.addEventListener('click', function() {
+                self.showAddToWatchlistPrompt();
+            });
+        }
         
-        // Add event listener for the empty watchlist add button
+        // 为空watchlist中的Add Stocks按钮添加事件监听器
         const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
         if (emptyWatchlistAddBtn) {
-            emptyWatchlistAddBtn.addEventListener('click', this.showAddToWatchlistPrompt);
+            emptyWatchlistAddBtn.addEventListener('click', function() {
+                self.showAddToWatchlistPrompt();
+            });
         }
+        
+        // 为Run Analysis按钮添加事件监听器
+        const emptyAnalysisGoBtn = document.getElementById('emptyAnalysisGo');
+        if (emptyAnalysisGoBtn) {
+            emptyAnalysisGoBtn.addEventListener('click', function() {
+                // 导航到分析页面
+                window.location.href = 'analysis.html';
+            });
+        }
+        
+        // 为Market Overview的切换按钮添加事件监听器
+        const marketTabs = document.querySelectorAll('.market-tab');
+        marketTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有标签的active类
+                marketTabs.forEach(t => t.classList.remove('active'));
+                
+                // 为点击的标签添加active类
+                this.classList.add('active');
+                
+                // 显示/隐藏相关指数
+                const market = this.dataset.market;
+                self.toggleMarketIndices(market);
+            });
+        });
     },
     
     /**
@@ -92,6 +126,7 @@ const Dashboard = {
      * Load watchlist data
      */
     loadWatchlist: function() {
+        const self = this; // 保存this引用
         const watchlistTable = document.getElementById('watchlistTable');
         if (!watchlistTable) return;
         
@@ -118,7 +153,9 @@ const Dashboard = {
             // Add event listener to the dynamically created button
             const dynamicBtn = watchlistTable.querySelector('#dynamicEmptyWatchlistAdd');
             if (dynamicBtn) {
-                dynamicBtn.addEventListener('click', this.showAddToWatchlistPrompt);
+                dynamicBtn.addEventListener('click', function() {
+                    self.showAddToWatchlistPrompt();
+                });
             }
             return;
         }
@@ -143,10 +180,10 @@ const Dashboard = {
             <td>--</td>
             <td>--</td>
             <td>
-                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700 analyze-btn" data-ticker="${ticker}">
+                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none analyze-btn" data-ticker="${ticker}">
                     <i class="ti ti-robot"></i>
                 </button>
-                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700 remove-btn" data-ticker="${ticker}">
+                <button class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none remove-btn" data-ticker="${ticker}">
                     <i class="ti ti-trash"></i>
                 </button>
             </td>
@@ -233,6 +270,7 @@ const Dashboard = {
      * Load recent analyses
      */
     loadRecentAnalyses: function() {
+        const self = this; // 保存this引用
         const analysesContainer = document.getElementById('recentAnalysesList');
         if (!analysesContainer) return;
         
@@ -243,18 +281,23 @@ const Dashboard = {
         
         if (recentAnalyses.length === 0) {
             analysesContainer.innerHTML = `
-                <div class="empty-state">
-                    <p>No recent analyses.</p>
-                    <button id="emptyAnalysisGo" class="btn-secondary">
-                        <i class="fas fa-robot"></i> Run Analysis
+                <div class="empty-state flex flex-col items-center justify-center py-8">
+                    <i class="ti ti-robot text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                    <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">No recent analyses</p>
+                    <button id="emptyAnalysisGo" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                        <i class="ti ti-robot"></i> Run Analysis
                     </button>
                 </div>
             `;
             
             // Add event listener
-            analysesContainer.querySelector('#emptyAnalysisGo').addEventListener('click', () => {
-                document.querySelector('[data-section="analysis"]').click();
-            });
+            const emptyAnalysisGoBtn = analysesContainer.querySelector('#emptyAnalysisGo');
+            if (emptyAnalysisGoBtn) {
+                emptyAnalysisGoBtn.addEventListener('click', function() {
+                    // 导航到分析页面
+                    window.location.href = 'analysis.html';
+                });
+            }
             return;
         }
         
@@ -331,22 +374,6 @@ const Dashboard = {
      * Load market indices
      */
     loadMarketIndices: function() {
-        // Set up tab functionality
-        const marketTabs = document.querySelectorAll('.market-tab');
-        marketTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs
-                marketTabs.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                tab.classList.add('active');
-                
-                // Show/hide relevant indices
-                const market = tab.dataset.market;
-                this.toggleMarketIndices(market);
-            });
-        });
-        
         // Load US market indices
         this.loadUsMarketIndices();
         

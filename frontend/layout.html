@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - AI Hedge Fund</title>
+    <title>AI Hedge Fund Dashboard</title>
     
     <!-- Tailwind CSS via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -74,7 +74,7 @@
                 </nav>
                 <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
                     <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                    <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
             <nav class="flex-1 overflow-y-auto p-4">
                 <ul class="space-y-1.5">
                     <li>
-                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-dashboard text-lg"></i>
                             <span>Dashboard</span>
                         </a>
@@ -123,7 +123,7 @@
             </nav>
             <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
                 <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
             </div>
         </aside>
 
@@ -163,162 +163,15 @@
                 </nav>
             </header>
 
-            <!-- Main content container -->
-            <main class="flex-1 overflow-y-auto">
-                <!-- Dashboard Section -->
-                <section id="dashboard" class="content-section p-4 sm:p-6 lg:p-8 active">
-                    <div class="max-w-[85rem] mx-auto">
-                        <div class="flex flex-col gap-2 mb-6">
-                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Dashboard</h2>
-                            <p class="text-secondary-600 dark:text-secondary-400">Market overview and portfolio summary</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                            <!-- Portfolio Summary Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Portfolio Summary</h3>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Total Value</p>
-                                            <p id="totalValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Cash</p>
-                                            <p id="cashValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Invested</p>
-                                            <p id="investedValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Daily Change</p>
-                                            <p id="dailyChange" class="text-lg font-semibold text-success-500">0.00%</p>
-                                        </div>
-                                    </div>
-                                    <div class="chart-container">
-                                        <canvas id="portfolioChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Market Overview Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Market Overview</h3>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div class="inline-flex flex-wrap items-center gap-2 mb-4">
-                                        <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-400 dark:hover:bg-primary-800/40 active" data-market="us">
-                                            US
-                                        </button>
-                                        <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-secondary-700 dark:text-secondary-400 dark:hover:bg-secondary-700" data-market="china">
-                                            China
-                                        </button>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div id="index-sp500" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">S&P 500</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-nasdaq" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">NASDAQ</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-russell" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Russell 2000</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-danger-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-sse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SSE Composite</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-szse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SZSE Component</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-csi300" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">CSI 300</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-danger-500 index-change">--</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Watchlist Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Watchlist</h3>
-                                    <button id="addToWatchlist" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
-                                        <i class="ti ti-plus"></i>
-                                    </button>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Price</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Change</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Signal</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="watchlistTable" class="divide-y divide-gray-200 dark:divide-secondary-700">
-                                                <!-- Empty state -->
-                                                <tr>
-                                                    <td colspan="5" class="px-4 py-6 text-center">
-                                                        <div class="flex flex-col items-center">
-                                                            <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">Your watchlist is empty</p>
-                                                            <button id="emptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                                <i class="ti ti-plus"></i> Add Stocks
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Recent Analysis Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Recent Analyses</h3>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div id="recentAnalysesList" class="space-y-4">
-                                        <!-- Empty state -->
-                                        <div class="empty-state flex flex-col items-center justify-center py-8">
-                                            <i class="ti ti-robot text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">No recent analyses</p>
-                                            <button id="emptyAnalysisGo" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                <i class="ti ti-robot"></i> Run Analysis
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            <!-- Main content container - Content will be injected here -->
+            <main class="flex-1 overflow-y-auto" id="main-content">
+                <!-- Page content will be inserted here -->
+                {% block content %}{% endblock %}
             </main>
         </div>
     </div>
 
-    <!-- Ticker Modal -->
+    <!-- Ticker Modal (Shared across pages) -->
     <div id="tickerModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto h-[calc(100%-3.5rem)]">
             <div class="flex flex-col bg-white border shadow-sm rounded-xl h-full dark:bg-secondary-800 dark:border-secondary-700">
@@ -438,85 +291,7 @@
     <script src="js/settings.js"></script>
     <script src="js/app.js"></script>
     
-    <!-- 新增的交互处理脚本 -->
-    <script src="js/dashboard-interactions.js"></script>
-    <script src="js/watchlist-actions.js"></script>
-    
-    <!-- Dashboard-specific initialization -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Dashboard module
-            Dashboard.init();
-            
-            // 直接添加事件监听器，确保功能正常工作
-            
-            // 1. 处理Add Stocks按钮
-            const addToWatchlistBtn = document.getElementById('addToWatchlist');
-            if (addToWatchlistBtn) {
-                addToWatchlistBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
-            
-            // 为空watchlist中的Add Stocks按钮添加事件监听器
-            const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
-            if (emptyWatchlistAddBtn) {
-                emptyWatchlistAddBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
-            
-            // 2. 处理Run Analysis按钮
-            const emptyAnalysisGoBtn = document.getElementById('emptyAnalysisGo');
-            if (emptyAnalysisGoBtn) {
-                emptyAnalysisGoBtn.addEventListener('click', function() {
-                    window.location.href = 'analysis.html';
-                });
-            }
-            
-            // 3. 处理Market Overview切换
-            const marketTabs = document.querySelectorAll('.market-tab');
-            marketTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 移除所有标签的active类
-                    marketTabs.forEach(t => t.classList.remove('active'));
-                    
-                    // 为点击的标签添加active类
-                    this.classList.add('active');
-                    
-                    // 显示/隐藏相关指数
-                    const market = this.dataset.market;
-                    const indices = document.querySelectorAll('.market-index');
-                    
-                    indices.forEach(index => {
-                        const id = index.id;
-                        if (market === 'us' && (id.includes('sp500') || id.includes('nasdaq') || id.includes('russell'))) {
-                            index.style.display = '';
-                        } else if (market === 'china' && (id.includes('sse') || id.includes('szse') || id.includes('csi300'))) {
-                            index.style.display = '';
-                        } else {
-                            index.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+    <!-- Page-specific script -->
+    {% block scripts %}{% endblock %}
 </body>
 </html>

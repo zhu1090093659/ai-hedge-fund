@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - AI Hedge Fund</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Preline UI via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
+    
+    <!-- Tabler Icons via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    
+    <!-- Custom CSS for theme colors -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Flatpickr (Date picker) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+
+<body class="bg-gray-50 dark:bg-secondary-900 text-secondary-900 dark:text-white h-full flex flex-col antialiased">
+    <!-- Mobile menu modal -->
+    <div id="mobile-menu" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
+        <div class="hs-overlay-open:mt-0 mt-7 transition-all ease-in-out duration-300 w-full h-full p-4">
+            <div class="flex flex-col bg-white dark:bg-secondary-800 border border-gray-200 dark:border-secondary-700 shadow-lg rounded-xl h-full">
+                <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                    <h3 class="font-medium text-gray-800 dark:text-white">
+                        <i class="ti ti-chart-line-up mr-2"></i>AI Hedge Fund
+                    </h3>
+                    <button type="button" class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 text-secondary-500 hover:text-secondary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white dark:text-secondary-400 dark:hover:text-secondary-200 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800" data-hs-overlay="#mobile-menu">
+                        <span class="sr-only">Close</span>
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+                <nav class="p-4 overflow-y-auto">
+                    <ul class="space-y-1.5">
+                        <li>
+                            <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg text-secondary-700 hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-dashboard text-lg"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="analysis.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-robot text-lg"></i>
+                                <span>AI Analysis</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="backtest.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-history text-lg"></i>
+                                <span>Backtesting</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="portfolio.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                                <i class="ti ti-briefcase text-lg"></i>
+                                <span>Portfolio</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                                <i class="ti ti-settings text-lg"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex lg:flex-col fixed top-0 left-0 z-[50] w-64 h-full bg-white border-r border-gray-200 dark:bg-secondary-800 dark:border-secondary-700">
+            <div class="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-secondary-700">
+                <i class="ti ti-chart-line-up text-2xl text-primary-600 dark:text-primary-400"></i>
+                <h2 class="text-lg font-semibold text-secondary-900 dark:text-white">AI Hedge Fund</h2>
+            </div>
+            <nav class="flex-1 overflow-y-auto p-4">
+                <ul class="space-y-1.5">
+                    <li>
+                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 text-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                            <i class="ti ti-dashboard text-lg"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="analysis.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                            <i class="ti ti-robot text-lg"></i>
+                            <span>AI Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="backtest.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                            <i class="ti ti-history text-lg"></i>
+                            <span>Backtesting</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portfolio.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                            <i class="ti ti-briefcase text-lg"></i>
+                            <span>Portfolio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                            <i class="ti ti-settings text-lg"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:ml-64 flex flex-col">
+            <!-- Header -->
+            <header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b border-gray-200 text-sm py-2.5 sm:py-4 dark:bg-secondary-800 dark:border-secondary-700">
+                <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 md:px-8" aria-label="Global">
+                    <div class="flex mr-5 lg:mr-0 lg:hidden">
+                        <a class="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="AI Hedge Fund">
+                            <i class="ti ti-chart-line-up text-primary-600 dark:text-primary-400 mr-2"></i>AI Hedge Fund
+                        </a>
+                    </div>
+                    <div class="flex items-center justify-between w-full lg:justify-end">
+                        <button type="button" class="lg:hidden text-secondary-500 hover:text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-300" data-hs-overlay="#mobile-menu" aria-controls="mobile-menu" aria-label="Toggle navigation">
+                            <span class="sr-only">Toggle navigation</span>
+                            <i class="ti ti-menu-2 text-xl"></i>
+                        </button>
+
+                        <div class="flex flex-1 items-center gap-2 sm:gap-4 lg:flex-grow-0 lg:flex-basis-auto">
+                            <div class="flex-1 relative">
+                                <label for="tickerSearch" class="sr-only">Search</label>
+                                <div class="relative">
+                                    <input type="text" id="tickerSearch" class="py-2 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Search ticker (e.g., AAPL, 600519.SH)" 
+                                           onkeypress="if(event.key === 'Enter') { performSearch(this.value); return false; }">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none ps-4">
+                                        <i class="ti ti-search text-gray-400 dark:text-secondary-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="searchButton" class="inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium bg-primary-500 text-white shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-white transition dark:hover:bg-primary-700 dark:focus:ring-primary-400 dark:focus:ring-offset-secondary-800"
+                                    onclick="performSearch(document.getElementById('tickerSearch').value)">
+                                <i class="ti ti-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <!-- Main content container -->
+            <main class="flex-1 overflow-y-auto">
+                <!-- Portfolio Section -->
+                <section id="portfolio" class="content-section p-4 sm:p-6 lg:p-8 active">
+                    <div class="max-w-[85rem] mx-auto">
+                        <div class="flex flex-col gap-2 mb-6">
+                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Portfolio</h2>
+                            <p class="text-secondary-600 dark:text-secondary-400">View and manage your investment portfolio</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Portfolio Summary Card -->
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Portfolio Summary</h3>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Total Value</p>
+                                            <p id="portfolioTotalValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Cash</p>
+                                            <p id="portfolioCash" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Invested</p>
+                                            <p id="portfolioInvested" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
+                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Realized Gain/Loss</p>
+                                            <p id="portfolioRealizedGain" class="text-lg font-semibold text-success-500">$0.00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Portfolio Positions -->
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Positions</h3>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Type</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Quantity</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Avg Price</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Current Price</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Value</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Gain/Loss</th>
+                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="positionsTable" class="divide-y divide-gray-200 dark:divide-secondary-700">
+                                                <!-- Empty state -->
+                                                <tr>
+                                                    <td colspan="8" class="px-4 py-6 text-center">
+                                                        <div class="flex flex-col items-center">
+                                                            <i class="ti ti-briefcase text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
+                                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">Your portfolio is empty. Use the AI Analysis to get investment recommendations.</p>
+                                                            <button id="emptyPortfolioAnalyze" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                                                <i class="ti ti-robot"></i> Run Analysis
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Asset Allocation Chart -->
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Asset Allocation</h3>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <div class="chart-container">
+                                        <canvas id="allocationChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Ticker Modal -->
+    <div id="tickerModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
+        <!-- Modal content - same as in layout.html -->
+        <!-- ... Ticker Modal Content ... -->
+    </div>
+
+    <!-- Toastify.js for notifications -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+    
+    <!-- Flatpickr date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    
+    <!-- Preline UI JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+    
+    <!-- Original scripts - keep these to preserve functionality -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/backtest.js"></script>
+    <script src="js/portfolio.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Portfolio-specific initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Portfolio module
+            Portfolio.init();
+            
+            // Add event listener for "Run Analysis" button
+            document.getElementById('emptyPortfolioAnalyze')?.addEventListener('click', function() {
+                window.location.href = 'analysis.html';
+            });
+        });
+    </script>
+</body>
+</html>

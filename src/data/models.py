@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from datetime import date, datetime
+from typing import Union
 
 
 class Price(BaseModel):
@@ -7,7 +9,7 @@ class Price(BaseModel):
     high: float
     low: float
     volume: int
-    time: str
+    time: Union[str, date, datetime]
 
 
 class PriceResponse(BaseModel):

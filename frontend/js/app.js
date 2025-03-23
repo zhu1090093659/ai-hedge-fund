@@ -12,8 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function initApp() {
     console.log('Initializing AI Hedge Fund Dashboard...');
     
+    // 确保Preline UI组件正确初始化
+    if (typeof HSStaticMethods !== 'undefined') {
+        HSStaticMethods.autoInit();
+    }
+    
     // Initialize charts configuration
-    Charts.init();
+    if (typeof Charts !== 'undefined') {
+        Charts.init();
+    }
     
     // Check API connectivity
     checkApiConnection();
@@ -28,45 +35,59 @@ function initApp() {
     initThemeToggle();
     initModals();
     
-    // Initialize module-specific functionality
-    Dashboard.init();
-    Analysis.init();
-    Backtest.init();
-    Portfolio.init();
-    Settings.init();
+    // 修复导航栏显示问题
+    fixNavigationDisplay();
+    
+    // Initialize module-specific functionality based on current page
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    if (currentPage === 'index.html' || currentPage === '') {
+        if (typeof Dashboard !== 'undefined') Dashboard.init();
+    } else if (currentPage === 'analysis.html') {
+        if (typeof Analysis !== 'undefined') Analysis.init();
+    } else if (currentPage === 'backtest.html') {
+        if (typeof Backtest !== 'undefined') Backtest.init();
+    } else if (currentPage === 'portfolio.html') {
+        if (typeof Portfolio !== 'undefined') Portfolio.init();
+    } else if (currentPage === 'settings.html') {
+        if (typeof Settings !== 'undefined') Settings.init();
+    }
 }
 
 /**
- * Check API connection on startup
+ * 修复导航栏显示问题
  */
-function checkApiConnection() {
-    // Get the base URL from config or localStorage
-    const apiBaseUrl = localStorage.getItem(CONFIG.STORAGE.API_ENDPOINT) || CONFIG.API.BASE_URL;
-    
-    // Make a simple ping request to the API root
-    fetch(`${apiBaseUrl}/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('API Connection:', data.status);
-            if (data.status === 'online') {
-                // API is online
-                CONFIG.API.SIMULATION = false;
+function fixNavigationDisplay() {
+    // 确保侧边栏在大屏幕上可见
+    const sidebar = document.querySelector('aside.hidden.lg\\:flex');
+    if (sidebar) {
+        // 确保侧边栏在大屏幕上正确显示
+        if (window.innerWidth >= 1024) { // lg断点通常是1024px
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('flex');
+        }
+        
+        // 监听窗口大小变化，确保响应式布局正常工作
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
             } else {
-                // API is not reporting as online
-                CONFIG.API.SIMULATION = true;
-                Utils.showToast('Warning: API connection status is not optimal. Some features may be limited.', 'warning');
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
             }
-        })
-        .catch(error => {
-            console.error('API Connection Error:', error);
-            CONFIG.API.SIMULATION = true;
-            Utils.showToast('API connection failed. Using simulation mode.', 'error');
         });
+    }
+    
+    // 确保移动端菜单按钮正常工作
+    const mobileMenuButton = document.querySelector('[data-hs-overlay="#mobile-menu"]');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 }
 
 /**
@@ -75,55 +96,74 @@ function checkApiConnection() {
 function initNavigation() {
     const sidebarLinks = document.querySelectorAll('.sidebar-nav-link');
     const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-    const sections = document.querySelectorAll('.content-section');
     
     // Combine both sets of links
     const allLinks = [...sidebarLinks, ...mobileLinks];
     
+    // Set active link based on current page
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
     allLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        
+        // Check if this link matches the current page
+        if (href === currentPage) {
+            link.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
+            link.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+        }
+        
         link.addEventListener('click', (e) => {
-            e.preventDefault();
+            // Get href attribute
+            const href = link.getAttribute('href');
             
-            // Get target section
+            // If it's a section within the same page (has data-section attribute)
             const sectionId = link.getAttribute('data-section');
-            if (!sectionId) return;
-            
-            // Remove active class from all links
-            allLinks.forEach(navLink => {
-                navLink.classList.remove('bg-primary-500', 'text-white');
-                navLink.classList.add('text-secondary-700', 'dark:text-white', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-            });
-            
-            // Add active class to clicked link
-            allLinks.forEach(navLink => {
-                if (navLink.getAttribute('data-section') === sectionId) {
-                    navLink.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
-                    navLink.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+            if (sectionId) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                allLinks.forEach(navLink => {
+                    navLink.classList.remove('bg-primary-500', 'text-white');
+                    navLink.classList.add('text-secondary-700', 'dark:text-white', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
+                });
+                
+                // Add active class to clicked link
+                allLinks.forEach(navLink => {
+                    if (navLink.getAttribute('data-section') === sectionId) {
+                        navLink.classList.remove('text-secondary-700', 'hover:bg-gray-100', 'dark:hover:bg-secondary-700');
+                        navLink.classList.add('bg-primary-500', 'text-white', 'hover:bg-primary-600', 'dark:hover:bg-primary-700');
+                    }
+                });
+                
+                // Hide all sections
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.classList.add('hidden');
+                });
+                
+                // Show target section
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    targetSection.classList.add('active');
                 }
-            });
-            
-            // Hide all sections
-            sections.forEach(section => {
-                section.classList.remove('active');
-                section.classList.add('hidden');
-            });
-            
-            // Show target section
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-                targetSection.classList.add('active');
+                
+                // Update URL hash
+                window.location.hash = sectionId;
             }
-            
-            // Close mobile menu if open
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu && mobileMenu.classList.contains('show')) {
-                const hsOverlay = HSOverlay.getInstance(mobileMenu);
-                if (hsOverlay) hsOverlay.hide();
+            // If it's a link to another page (has href attribute but no data-section)
+            else if (href && href !== '#') {
+                // Let the default navigation happen
+                // No need to call preventDefault()
+                
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu && mobileMenu.classList.contains('show')) {
+                    const hsOverlay = HSOverlay.getInstance(mobileMenu);
+                    if (hsOverlay) hsOverlay.hide();
+                }
             }
-            
-            // Update URL hash
-            window.location.hash = sectionId;
         });
     });
     
@@ -961,4 +1001,37 @@ function updateAnalysisTab(ticker, data) {
     html += `</div>`;
     
     container.innerHTML = html;
+}
+
+/**
+ * Check API connection on startup
+ */
+function checkApiConnection() {
+    // Get the base URL from config or localStorage
+    const apiBaseUrl = localStorage.getItem(CONFIG.STORAGE.API_ENDPOINT) || CONFIG.API.BASE_URL;
+    
+    // Make a simple ping request to the API root
+    fetch(`${apiBaseUrl}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('API Connection:', data.status);
+            if (data.status === 'online') {
+                // API is online
+                CONFIG.API.SIMULATION = false;
+            } else {
+                // API is not reporting as online
+                CONFIG.API.SIMULATION = true;
+                Utils.showToast('Warning: API connection status is not optimal. Some features may be limited.', 'warning');
+            }
+        })
+        .catch(error => {
+            console.error('API Connection Error:', error);
+            CONFIG.API.SIMULATION = true;
+            Utils.showToast('API connection failed. Using simulation mode.', 'error');
+        });
 }

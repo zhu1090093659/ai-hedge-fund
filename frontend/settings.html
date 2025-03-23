@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - AI Hedge Fund</title>
+    <title>Settings - AI Hedge Fund</title>
     
     <!-- Tailwind CSS via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
                 <nav class="p-4 overflow-y-auto">
                     <ul class="space-y-1.5">
                         <li>
-                            <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                            <a href="index.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg text-secondary-700 hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
                                 <i class="ti ti-dashboard text-lg"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -65,7 +65,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                            <a href="settings.html" class="mobile-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
                                 <i class="ti ti-settings text-lg"></i>
                                 <span>Settings</span>
                             </a>
@@ -74,7 +74,7 @@
                 </nav>
                 <div class="mt-auto border-t border-gray-200 dark:border-secondary-700 p-4">
                     <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                    <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                    <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
             <nav class="flex-1 overflow-y-auto p-4">
                 <ul class="space-y-1.5">
                     <li>
-                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
+                        <a href="index.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg hover:bg-gray-100 text-secondary-700 dark:text-white dark:hover:bg-secondary-700">
                             <i class="ti ti-dashboard text-lg"></i>
                             <span>Dashboard</span>
                         </a>
@@ -114,7 +114,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 dark:text-white dark:hover:bg-secondary-700">
+                        <a href="settings.html" class="sidebar-nav-link flex items-center gap-2 p-2.5 text-sm rounded-lg bg-primary-500 text-white hover:bg-primary-600 dark:hover:bg-primary-700">
                             <i class="ti ti-settings text-lg"></i>
                             <span>Settings</span>
                         </a>
@@ -123,7 +123,7 @@
             </nav>
             <div class="p-4 border-t border-gray-200 dark:border-secondary-700 text-center">
                 <p class="text-xs text-secondary-500 dark:text-secondary-400">v1.0.0</p>
-                <p class="text-xs text-secondary-500 dark:text-secondary-400"> 2025 AI Hedge Fund</p>
+                <p class="text-xs text-secondary-500 dark:text-secondary-400">© 2025 AI Hedge Fund</p>
             </div>
         </aside>
 
@@ -165,150 +165,128 @@
 
             <!-- Main content container -->
             <main class="flex-1 overflow-y-auto">
-                <!-- Dashboard Section -->
-                <section id="dashboard" class="content-section p-4 sm:p-6 lg:p-8 active">
+                <!-- Settings Section -->
+                <section id="settings" class="content-section p-4 sm:p-6 lg:p-8 active">
                     <div class="max-w-[85rem] mx-auto">
                         <div class="flex flex-col gap-2 mb-6">
-                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Dashboard</h2>
-                            <p class="text-secondary-600 dark:text-secondary-400">Market overview and portfolio summary</p>
+                            <h2 class="text-2xl font-bold text-secondary-900 dark:text-white">Settings</h2>
+                            <p class="text-secondary-600 dark:text-secondary-400">Configure application settings</p>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                            <!-- Portfolio Summary Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Portfolio Summary</h3>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Total Value</p>
-                                            <p id="totalValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Cash</p>
-                                            <p id="cashValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Invested</p>
-                                            <p id="investedValue" class="text-lg font-semibold text-secondary-900 dark:text-white">$0.00</p>
-                                        </div>
-                                        <div class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-xs text-secondary-500 dark:text-secondary-400 mb-1">Daily Change</p>
-                                            <p id="dailyChange" class="text-lg font-semibold text-success-500">0.00%</p>
-                                        </div>
-                                    </div>
-                                    <div class="chart-container">
-                                        <canvas id="portfolioChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Market Overview Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                            <!-- API Configuration Card -->
+                            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
                                 <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Market Overview</h3>
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">API Configuration</h3>
                                 </div>
                                 <div class="p-4 sm:p-6">
-                                    <div class="inline-flex flex-wrap items-center gap-2 mb-4">
-                                        <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-primary-100 text-primary-700 hover:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-primary-800/30 dark:text-primary-400 dark:hover:bg-primary-800/40 active" data-market="us">
-                                            US
-                                        </button>
-                                        <button class="market-tab py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-secondary-700 dark:text-secondary-400 dark:hover:bg-secondary-700" data-market="china">
-                                            China
-                                        </button>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div id="index-sp500" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">S&P 500</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
+                                    <form id="apiSettingsForm">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                            <div>
+                                                <label for="apiEndpoint" class="block text-sm font-medium mb-2 dark:text-white">API Endpoint</label>
+                                                <input type="url" id="apiEndpoint" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="https://api.example.com">
+                                            </div>
+                                            <div>
+                                                <label for="apiKey" class="block text-sm font-medium mb-2 dark:text-white">API Key (optional)</label>
+                                                <input type="password" id="apiKey" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" placeholder="Your API key">
+                                            </div>
                                         </div>
-                                        <div id="index-nasdaq" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">NASDAQ</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-russell" class="bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">Russell 2000</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-danger-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-sse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SSE Composite</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-szse" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">SZSE Component</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-success-500 index-change">--</p>
-                                        </div>
-                                        <div id="index-csi300" class="hidden bg-gray-50 dark:bg-secondary-700/50 rounded-lg p-4 text-center">
-                                            <p class="text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1">CSI 300</p>
-                                            <p class="text-lg font-semibold text-secondary-900 dark:text-white mb-1 index-value">--</p>
-                                            <p class="text-sm font-medium text-danger-500 index-change">--</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Watchlist Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700 flex justify-between items-center">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Watchlist</h3>
-                                    <button id="addToWatchlist" class="inline-flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white rounded-full dark:text-secondary-400 dark:hover:text-secondary-300 dark:focus:ring-secondary-700 dark:focus:ring-offset-secondary-800">
-                                        <i class="ti ti-plus"></i>
-                                    </button>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Ticker</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Price</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Change</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Signal</th>
-                                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-secondary-400">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="watchlistTable" class="divide-y divide-gray-200 dark:divide-secondary-700">
-                                                <!-- Empty state -->
-                                                <tr>
-                                                    <td colspan="5" class="px-4 py-6 text-center">
-                                                        <div class="flex flex-col items-center">
-                                                            <i class="ti ti-list-search text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">Your watchlist is empty</p>
-                                                            <button id="emptyWatchlistAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                                <i class="ti ti-plus"></i> Add Stocks
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Recent Analysis Card -->
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
-                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
-                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Recent Analyses</h3>
-                                </div>
-                                <div class="p-4 sm:p-6">
-                                    <div id="recentAnalysesList" class="space-y-4">
-                                        <!-- Empty state -->
-                                        <div class="empty-state flex flex-col items-center justify-center py-8">
-                                            <i class="ti ti-robot text-3xl text-gray-400 dark:text-secondary-600 mb-2"></i>
-                                            <p class="text-sm text-gray-500 dark:text-secondary-400 mb-3">No recent analyses</p>
-                                            <button id="emptyAnalysisGo" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
-                                                <i class="ti ti-robot"></i> Run Analysis
+                                        <div class="mt-6 flex flex-wrap gap-4 justify-end">
+                                            <button type="button" id="testApiBtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                                Test Connection
+                                            </button>
+                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                Save API Settings
                                             </button>
                                         </div>
-                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Display Settings Card -->
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Display Settings</h3>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <form id="displaySettingsForm">
+                                        <div class="space-y-5">
+                                            <div>
+                                                <label for="themeSelect" class="block text-sm font-medium mb-2 dark:text-white">Theme</label>
+                                                <select id="themeSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="light">Light</option>
+                                                    <option value="dark">Dark</option>
+                                                    <option value="system">System Default</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="colorSelect" class="block text-sm font-medium mb-2 dark:text-white">Chart Colors</label>
+                                                <select id="colorSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="DEFAULT">Default</option>
+                                                    <option value="MONOCHROME">Monochrome</option>
+                                                    <option value="COLORBLIND">Colorblind Friendly</option>
+                                                    <option value="VIBRANT">Vibrant</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="dateFormatSelect" class="block text-sm font-medium mb-2 dark:text-white">Date Format</label>
+                                                <select id="dateFormatSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mt-6 flex flex-wrap gap-4 justify-end">
+                                            <button type="button" id="resetDisplayBtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-800 dark:border-secondary-700 dark:text-white dark:hover:bg-secondary-700">
+                                                Reset to Default
+                                            </button>
+                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                Save Display Settings
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Data Settings Card -->
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-secondary-800 dark:border-secondary-700">
+                                <div class="px-4 py-3 border-b border-gray-200 dark:border-secondary-700">
+                                    <h3 class="font-semibold text-secondary-800 dark:text-secondary-200">Data Settings</h3>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <form id="dataSettingsForm">
+                                        <div class="space-y-5">
+                                            <div>
+                                                <label for="defaultMarketSelect" class="block text-sm font-medium mb-2 dark:text-white">Default Market</label>
+                                                <select id="defaultMarketSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <option value="all">All Markets</option>
+                                                    <option value="us">US Stocks</option>
+                                                    <option value="ashare">A-Shares</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="defaultAnalystSelect" class="block text-sm font-medium mb-2 dark:text-white">Default Analysts</label>
+                                                <select id="defaultAnalystSelect" multiple class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500" size="4">
+                                                    <!-- Analysts will be dynamically loaded here -->
+                                                    <option value="">Loading analysts...</option>
+                                                </select>
+                                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd key to select multiple analysts</p>
+                                            </div>
+                                            <div>
+                                                <label for="defaultModelSelect" class="block text-sm font-medium mb-2 dark:text-white">Default AI Model</label>
+                                                <select id="defaultModelSelect" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-secondary-900 dark:border-secondary-700 dark:text-secondary-400 dark:focus:ring-primary-500">
+                                                    <!-- Models will be dynamically loaded here -->
+                                                    <option value="">Loading models...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mt-6 flex justify-end">
+                                            <button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                Save Data Settings
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -416,7 +394,6 @@
             </div>
         </div>
     </div>
-
     <!-- Toastify.js for notifications -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
     
@@ -438,83 +415,39 @@
     <script src="js/settings.js"></script>
     <script src="js/app.js"></script>
     
-    <!-- 新增的交互处理脚本 -->
-    <script src="js/dashboard-interactions.js"></script>
-    <script src="js/watchlist-actions.js"></script>
-    
-    <!-- Dashboard-specific initialization -->
+    <!-- Settings-specific initialization -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Dashboard module
-            Dashboard.init();
+            // Initialize Settings module
+            Settings.init();
             
-            // 直接添加事件监听器，确保功能正常工作
+            // Initialize Analysis module for analyst and model loading
+            Analysis.init();
             
-            // 1. 处理Add Stocks按钮
-            const addToWatchlistBtn = document.getElementById('addToWatchlist');
-            if (addToWatchlistBtn) {
-                addToWatchlistBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
+            // Add event listeners for settings forms
+            document.getElementById('apiSettingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Settings.saveApiSettings();
+            });
             
-            // 为空watchlist中的Add Stocks按钮添加事件监听器
-            const emptyWatchlistAddBtn = document.getElementById('emptyWatchlistAdd');
-            if (emptyWatchlistAddBtn) {
-                emptyWatchlistAddBtn.addEventListener('click', function() {
-                    const ticker = prompt('Enter ticker symbol (e.g., AAPL, 600519.SH):');
-                    if (!ticker) return;
-                    
-                    if (Utils.isValidTicker(ticker.trim().toUpperCase())) {
-                        Utils.addToWatchlist(ticker.trim().toUpperCase());
-                        Dashboard.loadWatchlist(); // 重新加载watchlist
-                    } else {
-                        Utils.showToast('Invalid ticker format', 'error');
-                    }
-                });
-            }
+            document.getElementById('displaySettingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Settings.saveDisplaySettings();
+            });
             
-            // 2. 处理Run Analysis按钮
-            const emptyAnalysisGoBtn = document.getElementById('emptyAnalysisGo');
-            if (emptyAnalysisGoBtn) {
-                emptyAnalysisGoBtn.addEventListener('click', function() {
-                    window.location.href = 'analysis.html';
-                });
-            }
+            document.getElementById('dataSettingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Settings.saveDataSettings();
+            });
             
-            // 3. 处理Market Overview切换
-            const marketTabs = document.querySelectorAll('.market-tab');
-            marketTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 移除所有标签的active类
-                    marketTabs.forEach(t => t.classList.remove('active'));
-                    
-                    // 为点击的标签添加active类
-                    this.classList.add('active');
-                    
-                    // 显示/隐藏相关指数
-                    const market = this.dataset.market;
-                    const indices = document.querySelectorAll('.market-index');
-                    
-                    indices.forEach(index => {
-                        const id = index.id;
-                        if (market === 'us' && (id.includes('sp500') || id.includes('nasdaq') || id.includes('russell'))) {
-                            index.style.display = '';
-                        } else if (market === 'china' && (id.includes('sse') || id.includes('szse') || id.includes('csi300'))) {
-                            index.style.display = '';
-                        } else {
-                            index.style.display = 'none';
-                        }
-                    });
-                });
+            // Add event listener for reset button
+            document.getElementById('resetDisplayBtn').addEventListener('click', function() {
+                Settings.resetDisplaySettings();
+            });
+            
+            // Add event listener for test API button
+            document.getElementById('testApiBtn').addEventListener('click', function() {
+                Settings.testApiConnection();
             });
         });
     </script>
